@@ -1,0 +1,18 @@
+{
+  "gameId": "g8a3",
+  "roomCode": "K7X4QM",
+  "totalRounds": 10,
+  "winner": { "participantId": "pt1", "nickname": "Ana", "score": 15230 },
+  "ranking": [
+    { "position": 1, "participantId": "pt1", "nickname": "Ana", "score": 15230 },
+    { "position": 2, "participantId": "pt3", "nickname": "Caro", "score": 12100 },
+    { "position": 3, "participantId": "pt2", "nickname": "Beto", "score": 9840 },
+    { "position": 4, "participantId": "pt4", "nickname": "Dani", "score": 3100 }
+  ],
+  "stats": [
+    { "participantId": "pt1", "nickname": "Ana", "correctAnswers": 8, "totalAnswers": 10, "averageAnswerTimeMs": 5300, "fastestAnswerMs": 1900, "bestRound": { "number": 3, "points": 2232 } },
+    { "participantId": "pt3", "nickname": "Caro", "correctAnswers": 7, "totalAnswers": 10, "averageAnswerTimeMs": 7400, "fastestAnswerMs": 3100, "bestRound": { "number": 7, "points": 1850 } },
+    { "participantId": "pt2", "nickname": "Beto", "correctAnswers": 6, "totalAnswers": 9, "averageAnswerTimeMs": 6100, "fastestAnswerMs": 2400, "bestRound": { "number": 3, "points": 1500 } },
+    { "participantId": "pt4", "nickname": "Dani", "correctAnswers": 2, "totalAnswers": 5, "averageAnswerTimeMs": 9800, "fastestAnswerMs": 6000, "bestRound": { "number": 2, "points": 900 } }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "version": 41,
+  "phase": "ROUND_INTRO",
+  "serverTime": "2026-09-04T18:30:00Z",
+  "round": {
+    "number": 3,
+    "totalRounds": 10,
+    "type": "DOUBLE",
+    "endsAt": "2026-09-04T18:30:03Z",
+    "question": null
+  },
+  "me": {
+    "participantId": "pt1",
+    "score": 2450,
+    "lives": 2,
+    "status": "ACTIVE",
+    "hasAnswered": false,
+    "powers": [{ "powerType": "HINT" }, { "powerType": "SHIELD" }],
+    "activePower": null,
+    "lastResult": null
+  },
+  "players": [
+    { "participantId": "pt1", "nickname": "Ana", "score": 2450, "lives": 2, "status": "ACTIVE", "isHost": true, "hasAnswered": false, "pointsThisRound": null },
+    { "participantId": "pt2", "nickname": "Beto", "score": 1800, "lives": 3, "status": "ACTIVE", "isHost": false, "hasAnswered": false, "pointsThisRound": null },
+    { "participantId": "pt3", "nickname": "Caro", "score": 1200, "lives": 1, "status": "ACTIVE", "isHost": false, "hasAnswered": false, "pointsThisRound": null },
+    { "participantId": "pt4", "nickname": "Dani", "score": 900, "lives": 0, "status": "SPECTATOR", "isHost": false, "hasAnswered": false, "pointsThisRound": null }
+  ],
+  "ranking": null,
+  "winner": null
+}

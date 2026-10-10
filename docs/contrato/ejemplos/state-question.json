@@ -1,0 +1,41 @@
+{
+  "version": 43,
+  "phase": "QUESTION",
+  "serverTime": "2026-09-04T18:30:06Z",
+  "round": {
+    "number": 3,
+    "totalRounds": 10,
+    "type": "DOUBLE",
+    "endsAt": "2026-09-04T18:30:26Z",
+    "question": {
+      "id": "q27",
+      "text": "¿Año del primer PlayStation?",
+      "categoryId": "c1",
+      "difficulty": "MEDIUM",
+      "options": [
+        { "id": "o1", "text": "1992" },
+        { "id": "o2", "text": "1994" },
+        { "id": "o3", "text": "1996" },
+        { "id": "o4", "text": "1998" }
+      ]
+    }
+  },
+  "me": {
+    "participantId": "pt1",
+    "score": 2450,
+    "lives": 2,
+    "status": "ACTIVE",
+    "hasAnswered": false,
+    "powers": [{ "powerType": "HINT" }, { "powerType": "SHIELD" }],
+    "activePower": null,
+    "lastResult": null
+  },
+  "players": [
+    { "participantId": "pt1", "nickname": "Ana", "score": 2450, "lives": 2, "status": "ACTIVE", "isHost": true, "hasAnswered": false, "pointsThisRound": null },
+    { "participantId": "pt2", "nickname": "Beto", "score": 1800, "lives": 3, "status": "ACTIVE", "isHost": false, "hasAnswered": true, "pointsThisRound": null },
+    { "participantId": "pt3", "nickname": "Caro", "score": 1200, "lives": 1, "status": "ACTIVE", "isHost": false, "hasAnswered": false, "pointsThisRound": null },
+    { "participantId": "pt4", "nickname": "Dani", "score": 900, "lives": 0, "status": "SPECTATOR", "isHost": false, "hasAnswered": false, "pointsThisRound": null }
+  ],
+  "ranking": null,
+  "winner": null
+}
