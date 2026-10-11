@@ -1,6 +1,6 @@
 # Trivia Chaos — Contexto del proyecto
 
-> Archivo de contexto inicial. Resume lo definido en la Etapa 1 (definición de la API y diagramas de flujo) y la Etapa 2 (documentación de la API y pantallas). **Aún no hay código.** Equipo de 2 personas que trabajarán en paralelo y luego integrarán.
+> Archivo de contexto inicial. Resume lo definido en la Etapa 1 (definición de la API y diagramas de flujo) y la Etapa 2 (documentación de la API y pantallas). **Estado (oct 2026): el frontend `web/` está completo contra un mock; `api/` está por construir** (ver sección 12). Equipo de 2 personas que trabajan en paralelo y luego integran.
 
 **Equipo:** "Cristian Castro" es el nombre del equipo (aparece en los encabezados de los documentos). Los integrantes son 2: Adler Antonio Calvillo Arellano y Jared López García.
 
@@ -209,14 +209,16 @@ puntos = (base + bonus_velocidad) x mult_ronda x mult_poder
 
 - **Etapa 1:** completada (definición de API y diagramas).
 - **Etapa 2:** en curso (documentación de la API y pantallas según el diagrama de flujo).
-- **Sin código todavía.** Equipo de 2 personas.
+- **Frontend (`web/`, Adler): completo contra un mock.** Home, Crear sala, Unirse, Lobby, ciclo de partida (intro, pregunta, reveal, marcador, final, espectador), estadísticas, pantallas de error, sonido y efecto CRT. Detalle en `web/README.md` y `docs/frontend/pantallas-spec.md`.
+- **API (`api/`, Jared): por construir.** Empieza por `docs/frontend/GUIA-PARA-LA-API.md` y `api/CLAUDE.md`.
+- Equipo de 2 personas. Falta la **integración real** (el frontend nunca ha hablado con la API de verdad).
 - Pendientes por definir (no están en la documentación):
-  - Nombre definitivo del producto.
-  - Fórmula exacta del bonus de velocidad (**se deja pendiente a propósito; se definirá después**; el 316 del ejemplo es solo ilustrativo).
-  - Puntaje base de cada dificultad (niveles ya definidos: `EASY`, `MEDIUM`, `HARD`).
-  - Detalle de la pantalla 14 "Apuesta" (no descrita en el material).
+  - Nombre definitivo del producto. En el frontend se usa **Trivia Castro** (decisión de Adler); este archivo, `docs/` y `.env.example` aún dicen "Trivia Chaos": unificar con Jared.
+  - Fórmula exacta del bonus de velocidad (**se deja pendiente a propósito; se definirá después**; el 316 del ejemplo es solo ilustrativo). El mock del frontend usa `400·(20 s − t)/20 s` solo para desarrollar.
+  - Puntaje base de cada dificultad (niveles ya definidos: `EASY`, `MEDIUM`, `HARD`). El mock usa 500/800/1100 solo para desarrollar.
+  - Pantalla "Apuesta": no está en el contrato ni en la spec del frontend; **no se construye**.
   - Fuente de la API externa de preguntas.
-- Ya resuelto en el contrato compartido (`docs/contrato/README.md`, decisiones D1 a D12): efecto de los poderes (HINT quita 2 opciones incorrectas, SHIELD evita perder la vida al fallar, DOUBLE multiplica x2 los puntos; combinado con ronda DOUBLE da x4) y límites por defecto de sala (8 jugadores, 10 rondas, 3 vidas).
+  - Huecos del contrato detectados por el frontend (formato de `X-Server-Time`, timeout, escudo absorbido, revancha, desempate, rangos de ajustes): ver `docs/frontend/PENDIENTES.md`.- Ya resuelto en el contrato compartido (`docs/contrato/README.md`, decisiones D1 a D12): efecto de los poderes (HINT quita 2 opciones incorrectas, SHIELD evita perder la vida al fallar, DOUBLE multiplica x2 los puntos; combinado con ronda DOUBLE da x4) y límites por defecto de sala (8 jugadores, 10 rondas, 3 vidas).
 
 ## 13. Siguiente paso
 
@@ -226,6 +228,7 @@ El plan de trabajo en paralelo está en **`PLAN.md`**: dos frentes (A: API y dat
 - **Restricción:** el stack debe ser gratuito (lo es; el hosting en línea es opcional, se puede exponer en local).
 - **Responsables:** Jared lleva el frente A (API y datos) y Adler el frente B (Website). Ver `PLAN.md`, sección 7.
 - **Contrato compartido:** `docs/contrato/` (README, endpoints y `ejemplos/` con los JSON). Decisiones D1 a D12 confirmadas. Es la fuente de verdad para ambos frentes.
+- **Siguiente paso real:** Jared construye `api/` (primero los stubs de A2) y se hace la **Integración 1 y 2** del `PLAN.md`. Guía: `docs/frontend/GUIA-PARA-LA-API.md`.
 
 ## 14. Estructura del repositorio
 
@@ -235,11 +238,17 @@ Trivia/
 ├── PLAN.md            # plan de trabajo en paralelo
 ├── docker-compose.yml # MySQL para ambos
 ├── .gitignore
+├── README.md          # descripción del repo y por dónde empezar
 ├── api/               # frente A (Jared): FastAPI
+│   └── CLAUDE.md      # contexto de Claude Code para la API
 ├── web/               # frente B (Adler): React + Vite
+│   ├── README.md      # cómo correr/probar el frontend, mock vs API real
+│   └── CLAUDE.md      # contexto de Claude Code para el frontend
 └── docs/
-    └── contrato/      # contrato compartido
-        ├── README.md
-        ├── endpoints.md
-        └── ejemplos/  # 10 JSON usados como mocks
+    ├── contrato/      # contrato compartido (fuente de verdad)
+    │   ├── README.md
+    │   ├── endpoints.md
+    │   └── ejemplos/  # JSON usados como mocks y como esquema de pruebas
+    ├── frontend/      # design brief, spec de pantallas, PENDIENTES y GUIA-PARA-LA-API
+    └── etapa2/        # material histórico (no contractual)
 ```

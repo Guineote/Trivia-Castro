@@ -105,7 +105,7 @@ Principios que el código respeta (del `CLAUDE.md` raíz):
 
 ## Qué necesita el frontend de la API real
 
-Resumen para quien lleva `api/`. El detalle y el estado de cada punto están en [`docs/frontend/PENDIENTES.md`](../docs/frontend/PENDIENTES.md).
+Resumen para quien lleva `api/`. **Guía completa:** [`docs/frontend/GUIA-PARA-LA-API.md`](../docs/frontend/GUIA-PARA-LA-API.md). El estado de cada duda está en [`docs/frontend/PENDIENTES.md`](../docs/frontend/PENDIENTES.md).
 
 - [ ] Todas las respuestas, **incluidas las 304**, con `X-Server-Time` (se asume ISO 8601; **mejor con milisegundos**).
 - [ ] `ETag` con forma `"<gameId>-v<version>"` y `Vary: Authorization` en `GET /games/{id}/state`.
