@@ -1,5 +1,17 @@
 # Pendientes y alertas (frontend ↔ API)
 
+## Resumen para Jared (frente A)
+
+El frontend ya recorre todo el juego contra un mock (ver [`web/README.md`](../../web/README.md)). Para conectarlo a la API real, lo mínimo que necesita:
+
+1. **Headers:** `X-Server-Time` en *todas* las respuestas (incluidas 304), `ETag` `"<gameId>-v<version>"` y `Vary: Authorization` en `GET /games/{id}/state`.
+2. **Errores** en formato `{ "error": { "code", "message" } }` (también los de validación de Pydantic).
+3. **Puerto y CORS:** confirmar el puerto (se asume 8000). Con el proxy de Vite no hay CORS; si no, permitir `Authorization`/`If-None-Match` y exponer `ETag`/`X-Server-Time`.
+4. **Decisiones que el mock tuvo que inventar** y que dependen de ti (detalle abajo): `lastResult` en timeout, cómo saber si el SHIELD absorbió la vida, forma de `activePower`, formato/precisión de `X-Server-Time`, rangos de `settings`, y si `pointsThisRound` sigue poblado en `SCOREBOARD`.
+5. **Seguridad del repo:** `.env` está trackeado y `docker-compose.yml` publica MySQL en todas las interfaces (primer punto de abajo).
+
+Los supuestos del mock están marcados como `SUPUESTO DE MOCK` en `web/src/mock/simulator.ts`: **no son reglas del juego**.
+
 ## Seguridad
 - [ ] `.env` está **trackeado** en el repo público (subido por web). Arreglar: `git rm --cached .env`, commit, y avisar a Jared. Si esos valores se usan en otro lado, rotarlos. En `docker-compose.yml`, publicar MySQL solo en `127.0.0.1:3306`. Añadir `.env.local` al `.gitignore`.
 
