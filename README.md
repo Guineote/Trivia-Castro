@@ -28,6 +28,7 @@ Se construye una **API propia desde cero** (HTTP + JSON) y un **Website** que la
 | Ver el plan y quién hace qué | [`PLAN.md`](PLAN.md) |
 | Saber exactamente qué manda/recibe cada endpoint | [`docs/contrato/`](docs/contrato/README.md) ([endpoints](docs/contrato/endpoints.md), [ejemplos JSON](docs/contrato/ejemplos/)) |
 | Correr o tocar el frontend | [`web/README.md`](web/README.md) |
+| **Construir la API (Jared): qué espera el frontend, cómo probar y decisiones abiertas** | [`docs/frontend/GUIA-PARA-LA-API.md`](docs/frontend/GUIA-PARA-LA-API.md) y [`api/CLAUDE.md`](api/CLAUDE.md) |
 | Saber qué dudas del contrato siguen abiertas | [`docs/frontend/PENDIENTES.md`](docs/frontend/PENDIENTES.md) |
 
 **Si algo difiere entre documentos, gana el contrato.** Si el contrato cambia, se avisa al otro integrante y se actualiza `docs/contrato/` antes de tocar código.

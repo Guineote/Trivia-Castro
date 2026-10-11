@@ -2,7 +2,7 @@
 
 ## Resumen para Jared (frente A)
 
-El frontend ya recorre todo el juego contra un mock (ver [`web/README.md`](../../web/README.md)). Para conectarlo a la API real, lo mínimo que necesita:
+El frontend ya recorre todo el juego contra un mock (ver [`web/README.md`](../../web/README.md)). **Guía completa: [`GUIA-PARA-LA-API.md`](GUIA-PARA-LA-API.md).** Para conectarlo a la API real, lo mínimo que necesita:
 
 1. **Headers:** `X-Server-Time` en *todas* las respuestas (incluidas 304), `ETag` `"<gameId>-v<version>"` y `Vary: Authorization` en `GET /games/{id}/state`.
 2. **Errores** en formato `{ "error": { "code", "message" } }` (también los de validación de Pydantic).
