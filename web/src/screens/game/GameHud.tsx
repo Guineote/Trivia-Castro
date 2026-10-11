@@ -2,6 +2,7 @@ import { motion } from 'motion/react'
 import type { GameState } from '@/api/types'
 import { LifeHearts } from '@/components/LifeHearts/LifeHearts'
 import { RollingNumber } from '@/components/RollingNumber/RollingNumber'
+import { SettingsTools } from '@/components/SettingsTools/SettingsTools'
 import { dur } from '@/lib/motion'
 import styles from './GameHud.module.css'
 
@@ -39,6 +40,9 @@ export function GameHud({ state, maxLives, scoreFrom, livesFrom }: GameHudProps)
         ) : (
           <span className={styles.roundLabel}>FIN</span>
         )}
+      </div>
+      <div className={styles.tools}>
+        <SettingsTools inline />
       </div>
       <div className={styles.stats}>
         <span className={styles.score}>

@@ -36,7 +36,10 @@ Los supuestos del mock están marcados como `SUPUESTO DE MOCK` en `web/src/mock/
 - [x] **Pantalla 02 (Crear sala) corregida:** la acción es solo `POST /rooms` (por D2 el creador queda como host y primer participante, y la respuesta trae su `participantId`); no hay un segundo paso "crear sala". Corregido en `pantallas-spec.md`.
 
 - [ ] **Pantalla 08 (Scoreboard) vs contrato:** la spec dice mostrar los puntos de la ronda (`pointsThisRound`) en el marcador, pero el contrato los manda en `null` durante `SCOREBOARD` (solo vienen en `REVEAL`). Gana el contrato: los puntos ganados por jugador se muestran en el REVEAL (07) y el marcador solo anima el puntaje propio (`me.lastResult.pointsAwarded`). Si se quiere la ganancia de todos en el marcador, pedir a Jared que `pointsThisRound` siga poblado en `SCOREBOARD`.
-- [ ] **Estadísticas (10/15) y revancha (11):** la pantalla Final solo ofrece "VOLVER AL INICIO"; falta la vista de `GET /games/{id}/results` y la revancha sigue pendiente con Jared.
+- [x] **Estadísticas (10/15):** implementadas en `/partida/:gameId/resultados` (tarjetas y tabla) con `GET /games/{id}/results`.
+- [ ] **Revancha (11):** el final solo ofrece ESTADISTICAS y SALIR (vuelve a Home). Falta definir con Jared cómo se pide una revancha en la misma sala (¿otro `POST /rooms/{code}/games`?).
+- [ ] **Semántica de las estadísticas (D12):** el cliente muestra lo que manda `/results` sin recalcular. Confirmar con Jared: si `averageAnswerTimeMs` y `fastestAnswerMs` incluyen respuestas incorrectas, qué valen cuando el jugador no respondió nunca (hoy el mock manda `0` y el cliente muestra "—") y qué `bestRound` se manda sin puntos (el cliente muestra "—" si `points` es 0). En el mock, `totalAnswers` cuenta solo las rondas respondidas (no los timeouts); confirmar qué hace el servidor real.
+- [ ] **Empates en el ranking:** el cliente confía en `position` del servidor y no resuelve empates por su cuenta. Pedir a Jared el criterio de desempate (¿orden de unión?, ¿tiempo?).
 
 ## Inconsistencias de la presentación
 - La diapositiva 15 promete rondas "rápida" y "bomba" en v1; el contrato solo tiene `NORMAL` y `DOUBLE`. Ajustar la diapositiva o acordar con Jared.

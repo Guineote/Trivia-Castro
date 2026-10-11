@@ -1,4 +1,5 @@
 import type { PowerType } from '@/api/types'
+import { play } from '@/lib/sound'
 import { PowerIcon } from '../PixelIcon/PixelIcon'
 import { POWER_HELP, POWER_LABEL } from './labels'
 import styles from './PowerSlot.module.css'
@@ -25,7 +26,10 @@ export function PowerSlot({ type, state, locked = false, onUse }: PowerSlotProps
       aria-pressed={state === 'active'}
       aria-label={`${POWER_LABEL[type]}: ${POWER_HELP[type]} (${stateLabel})`}
       title={POWER_HELP[type]}
-      onClick={() => onUse?.(type)}
+      onClick={() => {
+        play('power')
+        onUse?.(type)
+      }}
     >
       <span className={styles.icon}>
         <PowerIcon type={type} pixel={4} />

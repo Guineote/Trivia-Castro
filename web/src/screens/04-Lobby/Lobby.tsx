@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { api } from '@/api/endpoints'
-import { ApiError, errorMessage, messageFromError } from '@/api/errors'
+import { ApiError, messageFromError } from '@/api/errors'
 import { roomKey, useRoom } from '@/api/hooks'
 import { updateSession, useSession } from '@/api/session'
 import type { RoomSettings } from '@/api/types'
@@ -15,6 +15,7 @@ import { PixelSlider } from '@/components/PixelSlider/PixelSlider'
 import { ReconnectBanner } from '@/components/ReconnectBanner/ReconnectBanner'
 import { RoomCode } from '@/components/RoomCode/RoomCode'
 import { dur, glitchIn } from '@/lib/motion'
+import { play } from '@/lib/sound'
 import { SETTINGS_RANGES } from '@/lib/settingsRanges'
 import styles from './Lobby.module.css'
 
@@ -49,9 +50,19 @@ export default function Lobby() {
   const gameId = room?.currentGameId ?? startedGameId
   const starting = Boolean(gameId && me)
 
+  // Suena un "pop" cuando entra alguien nuevo (no en la primera carga).
+  const knownPlayers = useRef<number | null>(null)
+  const playerCount = room?.participants.length
+  useEffect(() => {
+    if (playerCount === undefined) return
+    if (knownPlayers.current !== null && playerCount > knownPlayers.current) play('join')
+    knownPlayers.current = playerCount
+  }, [playerCount])
+
   // Al verse currentGameId (D1) todos pasan a /games/{id}/state.
   useEffect(() => {
     if (!gameId || !me) return
+    play('go')
     const id = setTimeout(() => navigate(`/partida/${gameId}`, { replace: true }), dur(START_OVERLAY_SECONDS) * 1000)
     return () => clearTimeout(id)
   }, [gameId, me, navigate])
@@ -112,7 +123,7 @@ export default function Lobby() {
   // ── Estados especiales
   const error = roomQuery.error
   if (!room && error instanceof ApiError && error.code !== 'NETWORK_ERROR') {
-    return <ErrorPanel message={errorMessage(error.code)} onBack={() => navigate('/')} />
+    return <ErrorPanel code={error.code} onBack={() => navigate('/')} />
   }
   if (!room) {
     return (

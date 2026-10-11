@@ -1,4 +1,6 @@
 import { motion, useReducedMotion } from 'motion/react'
+import { useEffect } from 'react'
+import { play } from '@/lib/sound'
 import { dur } from '@/lib/motion'
 import styles from './PhaseCurtain.module.css'
 
@@ -16,6 +18,9 @@ export const CURTAIN_COVER_SECONDS = 0.22
  */
 export function PhaseCurtain({ runKey }: { runKey: number }) {
   const reduce = useReducedMotion()
+  useEffect(() => {
+    if (runKey > 0) play('swoosh')
+  }, [runKey])
   if (runKey === 0 || reduce) return null
   return (
     <div className={styles.curtain} aria-hidden="true">

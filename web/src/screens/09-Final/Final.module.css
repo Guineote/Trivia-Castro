@@ -138,3 +138,12 @@
   justify-content: center;
   padding: 8px 0 16px;
 }
+
+.me {
+  padding: 3px 5px;
+  background: var(--magenta);
+  color: var(--ink);
+  font-family: var(--font-title);
+  font-size: 8px;
+  line-height: 1;
+}

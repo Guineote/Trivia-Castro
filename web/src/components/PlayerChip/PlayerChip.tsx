@@ -11,11 +11,11 @@ interface PlayerChipProps {
   showAnswered?: boolean
 }
 
-/** Nickname, vidas y check de "ya respondió". Los espectadores se ven apagados. */
+/** Nickname, vidas y check de "ya respondió". Los espectadores se ven apagados. Va dentro de un <li> del llamador. */
 export function PlayerChip({ player, isMe = false, showAnswered = false }: PlayerChipProps) {
   const spectator = player.status === 'SPECTATOR'
   return (
-    <li className={[styles.chip, isMe ? styles.me : '', spectator ? styles.spectator : ''].filter(Boolean).join(' ')}>
+    <span className={[styles.chip, isMe ? styles.me : '', spectator ? styles.spectator : ''].filter(Boolean).join(' ')}>
       <span className={styles.name}>{player.nickname}</span>
       {spectator ? (
         <span className={styles.badge}>ESP</span>
@@ -42,6 +42,6 @@ export function PlayerChip({ player, isMe = false, showAnswered = false }: Playe
           </span>
         )
       ) : null}
-    </li>
+    </span>
   )
 }

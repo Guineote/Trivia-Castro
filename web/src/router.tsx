@@ -4,6 +4,7 @@ import { RequireSession } from './components/RequireSession/RequireSession'
 import CreateRoom from './screens/02-CreateRoom/CreateRoom'
 import Home from './screens/01-Home/Home'
 import Join from './screens/03-Join/Join'
+import Results from './screens/10-Results/Results'
 import Lobby from './screens/04-Lobby/Lobby'
 import Game from './screens/game/Game'
 import ComingSoon from './screens/stubs/ComingSoon'
@@ -19,6 +20,7 @@ export const router = createBrowserRouter([
       { path: '/sala/:code', element: <RequireSession><Lobby /></RequireSession> },
       // Partida: una sola ruta; la pantalla (05–09) la decide `phase` del estado del servidor.
       { path: '/partida/:gameId', element: <Game /> },
+      { path: '/partida/:gameId/resultados', element: <RequireSession><Results /></RequireSession> },
       { path: '*', element: <ComingSoon screen="404 · NO ENCONTRADO" /> },
     ],
   },

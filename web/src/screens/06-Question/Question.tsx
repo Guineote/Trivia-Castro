@@ -13,6 +13,7 @@ import { Timer } from '@/components/Timer/Timer'
 import { useCountdown } from '@/lib/clock'
 import { glitchIn } from '@/lib/motion'
 import { LAST_SECONDS_WARNING } from '@/lib/phases'
+import { play } from '@/lib/sound'
 import { GameHud } from '../game/GameHud'
 import { powerStates } from '../game/powers'
 import type { GameScreenProps } from '../game/types'
@@ -56,6 +57,7 @@ export default function Question({ gameId, state, maxLives }: GameScreenProps) {
     mutationFn: (optionId: string) => api.answer(gameId, round?.number ?? 0, optionId),
     onMutate: (optionId) => {
       setChosen(optionId) // feedback inmediato (<100 ms); el servidor lo confirma con hasAnswered
+      play('select')
       setMessage(null)
     },
     onError: (err) => {
@@ -170,7 +172,9 @@ export default function Question({ gameId, state, maxLives }: GameScreenProps) {
           </p>
           <ul className={styles.chips} aria-label="Jugadores">
             {players.map((p) => (
-              <PlayerChip key={p.participantId} player={p} isMe={p.participantId === me.participantId} showAnswered />
+              <li key={p.participantId}>
+                <PlayerChip player={p} isMe={p.participantId === me.participantId} showAnswered />
+              </li>
             ))}
           </ul>
         </div>

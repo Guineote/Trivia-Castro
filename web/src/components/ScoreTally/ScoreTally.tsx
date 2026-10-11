@@ -2,6 +2,7 @@ import { motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import type { LastResult } from '@/api/types'
 import { dur } from '@/lib/motion'
+import { play } from '@/lib/sound'
 import { RollingNumber } from '../RollingNumber/RollingNumber'
 import styles from './ScoreTally.module.css'
 
@@ -38,6 +39,11 @@ export function ScoreTally({ result, previousScore, delay = 0 }: ScoreTallyProps
   const rows = result.isCorrect ? buildRows(result) : []
   const [step, setStep] = useState(0)
   const totalSteps = rows.length + 2 // filas + total de la ronda + puntaje acumulado
+
+  // Cada paso del desglose tiene su "ding".
+  useEffect(() => {
+    if (step > 0) play('ding')
+  }, [step])
 
   useEffect(() => {
     if (step >= totalSteps) return

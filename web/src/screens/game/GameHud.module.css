@@ -61,3 +61,12 @@
     padding: 8px 10px;
   }
 }
+
+.tools {
+  margin-left: auto;
+  order: 2;
+}
+
+.stats {
+  order: 3;
+}
