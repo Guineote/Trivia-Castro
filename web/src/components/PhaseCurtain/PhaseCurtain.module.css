@@ -1,0 +1,14 @@
+.curtain {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+}
+
+.bar {
+  flex: 1;
+  border-block: 2px solid var(--black);
+  will-change: transform;
+}

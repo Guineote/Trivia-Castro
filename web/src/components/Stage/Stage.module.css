@@ -1,0 +1,64 @@
+.stage {
+  position: relative;
+  z-index: var(--z-content);
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  padding: 16px;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 16px;
+  width: min(100%, 1100px);
+  margin-inline: auto;
+}
+
+/* Espectador: la escena se ve en gris parcial, pero se ve entera. */
+.spectator .content {
+  filter: grayscale(0.7);
+}
+
+.stamp {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  z-index: var(--z-overlay);
+  margin-left: -88px;
+  width: 176px;
+  padding: 8px 0;
+  background: var(--black);
+  color: var(--ink);
+  border: var(--border) solid var(--ink-dim);
+  font-family: var(--font-title);
+  font-size: 16px;
+  text-align: center;
+  transform: rotate(-3deg);
+  pointer-events: none;
+}
+
+.urgent {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  border: 10px solid var(--red);
+  pointer-events: none;
+}
+
+@media (min-width: 900px) {
+  .stage {
+    padding: 24px 32px;
+  }
+}
+
+@media (max-width: 519px) {
+  .stage {
+    padding: 10px;
+  }
+
+  .content {
+    gap: 8px;
+  }
+}

@@ -1,0 +1,296 @@
+.page {
+  position: relative;
+  z-index: var(--z-content);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: min(100%, 1280px);
+  min-height: 100dvh;
+  margin-inline: auto;
+  padding: 56px 16px 40px;
+}
+
+.center {
+  position: relative;
+  z-index: var(--z-content);
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+}
+
+.loading {
+  font-family: var(--font-title);
+  font-size: 16px;
+  animation: blink 1s steps(1) infinite;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.title {
+  color: var(--cyan);
+  font-size: clamp(24px, 6vw, 48px);
+  font-size: round(down, clamp(24px, 6vw, 48px), 8px);
+  text-shadow: 5px 5px 0 var(--black);
+}
+
+.meta {
+  color: var(--ink-dim);
+  font-weight: 700;
+}
+
+.meta strong {
+  color: var(--yellow);
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.tab {
+  padding: 10px 14px;
+  background: var(--bg);
+  color: var(--ink-dim);
+  border: var(--border) solid var(--black);
+  border-radius: 0;
+  box-shadow: 3px 3px 0 var(--black);
+  font-family: var(--font-title);
+  font-size: 8px;
+}
+
+.tab[aria-selected='true'] {
+  background: var(--cyan);
+  color: var(--bg);
+}
+
+.panel {
+  flex: 1;
+}
+
+/* ── Tarjetas (pantalla 10) ───────────────────────────── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
+  gap: 28px 20px;
+  margin: 0;
+  padding: 8px 0 0;
+  list-style: none;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 26px 16px 16px;
+  background: var(--bg-2);
+  border: var(--border) solid var(--card);
+  box-shadow: var(--shadow-hard);
+}
+
+/* Franja "holográfica": bloques de color duro, sin degradados suaves. */
+.holo {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 10px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--magenta) 0 16px,
+    var(--cyan) 16px 32px,
+    var(--yellow) 32px 48px,
+    var(--violet) 48px 64px
+  );
+}
+
+.mine {
+  outline: 4px solid var(--yellow);
+  outline-offset: 3px;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.place {
+  color: var(--card);
+  font-family: var(--font-title);
+  font-size: 24px;
+  text-shadow: 3px 3px 0 var(--black);
+}
+
+.crown,
+.you {
+  padding: 3px 5px;
+  font-family: var(--font-title);
+  font-size: 8px;
+  line-height: 1;
+}
+
+.crown {
+  background: var(--yellow);
+  color: var(--bg);
+}
+
+.you {
+  margin-left: auto;
+  background: var(--magenta);
+  color: var(--ink);
+}
+
+.cardName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 24px;
+}
+
+.cardScore {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--yellow);
+  font-family: var(--font-title);
+  font-size: 24px;
+  text-shadow: 3px 3px 0 var(--black);
+  font-variant-numeric: tabular-nums;
+}
+
+.pts {
+  color: var(--ink-dim);
+  font-size: 8px;
+  text-shadow: none;
+}
+
+.accuracy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.blocks {
+  display: flex;
+  gap: 3px;
+  height: 18px;
+  padding: 3px;
+  background: var(--bg);
+  border: 3px solid var(--black);
+}
+
+.block {
+  flex: 1;
+}
+
+.accuracyText {
+  color: var(--ink-dim);
+  font-family: var(--font-title);
+  font-size: 8px;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 12px;
+  margin: 0;
+}
+
+.facts dt {
+  align-self: center;
+  color: var(--yellow);
+  font-family: var(--font-title);
+  font-size: 8px;
+}
+
+.facts dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+}
+
+.noStats {
+  color: var(--ink-dim);
+  font-weight: 700;
+}
+
+/* ── Tabla (pantalla 15, proyector) ───────────────────── */
+.tableWrap {
+  overflow-x: auto;
+  background: var(--bg-2);
+  border: var(--border) solid var(--black);
+  box-shadow: var(--shadow-hard);
+}
+
+.table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  font-weight: 700;
+  font-size: clamp(16px, 1.8vw, 26px);
+}
+
+.table th,
+.table td {
+  padding: 12px 14px;
+  text-align: right;
+  border-bottom: 3px solid var(--black);
+}
+
+.table thead th {
+  color: var(--yellow);
+  font-family: var(--font-title);
+  font-size: 8px;
+  font-weight: 400;
+  background: var(--bg);
+}
+
+.table thead th:nth-child(2),
+.table .nameCell {
+  text-align: left;
+}
+
+.table thead th:first-child,
+.table .rank {
+  text-align: center;
+}
+
+.rank {
+  font-family: var(--font-title);
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.mineRow {
+  background: var(--bg-3);
+  outline: 3px solid var(--yellow);
+  outline-offset: -3px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+@keyframes blink {
+  0%,
+  69% {
+    opacity: 1;
+  }
+  70%,
+  99% {
+    opacity: 0.35;
+  }
+}

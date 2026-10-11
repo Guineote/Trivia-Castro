@@ -1,0 +1,54 @@
+.panel {
+  position: relative;
+  padding: clamp(16px, 4vw, 24px);
+  background: var(--bg-2);
+  border: var(--border) solid var(--black);
+  border-radius: 0;
+  box-shadow: var(--shadow-hard);
+}
+
+.accent {
+  background: var(--bg-3);
+  border-color: var(--cyan);
+  box-shadow: 6px 6px 0 var(--black);
+}
+
+.dark {
+  background: var(--bg);
+}
+
+/* Esquinas "mordidas" estilo pixel: dos cuadritos del color del fondo. */
+.panel::before,
+.panel::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--bg);
+  border: var(--border) solid var(--black);
+  pointer-events: none;
+}
+
+.panel::before {
+  top: -4px;
+  right: -4px;
+}
+
+.panel::after {
+  bottom: -4px;
+  left: -4px;
+}
+
+.title {
+  position: absolute;
+  top: -26px;
+  left: 16px;
+  padding: 6px 10px;
+  background: var(--yellow);
+  color: var(--bg);
+  border: var(--border) solid var(--black);
+  font-family: var(--font-title);
+  font-size: 16px;
+  line-height: 1;
+  box-shadow: var(--shadow-hard-sm);
+}

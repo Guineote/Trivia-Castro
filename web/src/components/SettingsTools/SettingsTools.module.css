@@ -1,0 +1,48 @@
+.tools {
+  display: flex;
+  gap: 8px;
+}
+
+.floating {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: var(--z-overlay);
+}
+
+.tool {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: var(--bg);
+  border: 3px solid var(--black);
+  border-radius: 0;
+  box-shadow: 3px 3px 0 var(--black);
+  transition: transform var(--dur-micro) var(--ease-snap);
+}
+
+.tool:hover {
+  transform: translateY(-2px);
+}
+
+.tool:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 var(--black);
+}
+
+.on {
+  border-color: var(--cyan);
+}
+
+.off {
+  border-color: var(--ink-dim);
+  opacity: 0.85;
+}
+
+.inline .tool {
+  width: 32px;
+  height: 32px;
+  box-shadow: none;
+}

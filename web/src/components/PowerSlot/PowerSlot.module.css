@@ -1,0 +1,112 @@
+.slot {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 88px;
+  min-height: 88px;
+  padding: 10px 6px 8px;
+  background: var(--bg-2);
+  color: var(--ink);
+  border: var(--border) solid var(--black);
+  border-radius: 0;
+  box-shadow: var(--shadow-hard-sm);
+  transition:
+    transform var(--dur-micro) var(--ease-snap),
+    box-shadow var(--dur-micro) var(--ease-snap);
+  touch-action: manipulation;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+}
+
+.label {
+  font-family: var(--font-title);
+  font-size: 8px;
+  line-height: 1;
+}
+
+.available:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: var(--yellow);
+}
+
+.available:active:not(:disabled) {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 var(--black);
+}
+
+/* Disponible pero bloqueado (ya respondiste): se ve, pero apagado. */
+.available:disabled {
+  opacity: 0.55;
+  filter: saturate(0.4);
+}
+
+.active {
+  background: var(--bg-3);
+  border-color: var(--yellow);
+  box-shadow: 4px 4px 0 var(--black);
+  animation: power-on 0.9s steps(2, jump-none) infinite;
+}
+
+@keyframes power-on {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-3px);
+  }
+}
+
+.tag {
+  position: absolute;
+  top: -12px;
+  right: -8px;
+  padding: 4px 6px;
+  background: var(--yellow);
+  color: var(--bg);
+  border: 3px solid var(--black);
+  font-family: var(--font-title);
+  font-size: 8px;
+  line-height: 1;
+}
+
+.used {
+  opacity: 0.4;
+  border-style: dashed;
+  border-color: var(--ink-dim);
+  box-shadow: none;
+}
+
+.used .icon {
+  filter: grayscale(1);
+}
+
+.strike {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 50%;
+  height: 4px;
+  background: var(--ink-dim);
+  transform: rotate(-18deg);
+}
+
+@media (max-width: 519px) {
+  .slot {
+    width: 72px;
+    min-height: 72px;
+    gap: 4px;
+    padding: 6px 4px;
+  }
+
+  .icon {
+    height: 32px;
+  }
+}

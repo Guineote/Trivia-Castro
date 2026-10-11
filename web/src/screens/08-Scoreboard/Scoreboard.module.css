@@ -1,0 +1,146 @@
+.board {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg-2);
+  border: var(--border) solid var(--black);
+  box-shadow: var(--shadow-hard);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+
+.title {
+  color: var(--yellow);
+  font-size: 24px;
+  text-shadow: 4px 4px 0 var(--black);
+}
+
+.remaining {
+  color: var(--cyan);
+  font-family: var(--font-title);
+  font-size: 8px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 8px 12px;
+  background: var(--bg);
+  border: var(--border) solid var(--black);
+  box-shadow: var(--shadow-hard-sm);
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.position {
+  color: var(--magenta);
+  font-family: var(--font-title);
+  font-size: 24px;
+  text-shadow: 3px 3px 0 var(--black);
+}
+
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.score {
+  min-width: 6ch;
+  color: var(--yellow);
+  font-family: var(--font-title);
+  font-size: 16px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.me {
+  border-color: var(--yellow);
+}
+
+.spectator {
+  opacity: 0.55;
+}
+
+.badge {
+  padding: 3px 6px;
+  background: var(--bg-3);
+  color: var(--ink-dim);
+  font-family: var(--font-title);
+  font-size: 8px;
+}
+
+.up,
+.down,
+.same {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 4ch;
+  font-family: var(--font-title);
+  font-size: 8px;
+}
+
+.up {
+  color: var(--green);
+}
+
+.down {
+  color: var(--red);
+}
+
+.same {
+  color: var(--ink-dim);
+}
+
+/* El que sube destella; el que baja se oscurece. */
+.rose {
+  animation: flash-up 0.9s steps(2, jump-none) 2;
+}
+
+.fell {
+  filter: brightness(0.7);
+}
+
+@keyframes flash-up {
+  from {
+    background: var(--bg);
+  }
+  to {
+    background: #12482a;
+  }
+}
+
+@media (max-width: 520px) {
+  .row {
+    grid-template-columns: 28px minmax(0, 1fr) auto auto auto;
+    gap: 6px;
+    padding: 8px;
+    font-size: 16px;
+  }
+
+  .up,
+  .down,
+  .same {
+    min-width: 2ch;
+  }
+}
