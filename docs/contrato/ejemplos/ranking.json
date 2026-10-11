@@ -1,0 +1,10 @@
+{
+  "gameId": "g8a3",
+  "afterRound": 3,
+  "items": [
+    { "position": 1, "participantId": "pt1", "nickname": "Ana", "score": 4682, "positionDelta": 0 },
+    { "position": 2, "participantId": "pt3", "nickname": "Caro", "score": 2900, "positionDelta": 1 },
+    { "position": 3, "participantId": "pt2", "nickname": "Beto", "score": 1800, "positionDelta": -1 },
+    { "position": 4, "participantId": "pt4", "nickname": "Dani", "score": 900, "positionDelta": 0 }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "version": 53,
+  "phase": "SCOREBOARD",
+  "serverTime": "2026-09-04T18:30:32Z",
+  "round": {
+    "number": 3,
+    "totalRounds": 10,
+    "type": "DOUBLE",
+    "endsAt": "2026-09-04T18:30:37Z",
+    "question": null
+  },
+  "me": {
+    "participantId": "pt1",
+    "score": 4682,
+    "lives": 2,
+    "status": "ACTIVE",
+    "hasAnswered": true,
+    "powers": [{ "powerType": "HINT" }, { "powerType": "SHIELD" }],
+    "activePower": null,
+    "lastResult": {
+      "chosenOptionId": "o2",
+      "isCorrect": true,
+      "answerTimeMs": 4200,
+      "basePoints": 800,
+      "speedBonus": 316,
+      "roundMultiplier": 2,
+      "powerMultiplier": 1,
+      "pointsAwarded": 2232,
+      "livesLost": 0,
+      "becameSpectator": false
+    }
+  },
+  "players": [
+    { "participantId": "pt1", "nickname": "Ana", "score": 4682, "lives": 2, "status": "ACTIVE", "isHost": true, "hasAnswered": true, "pointsThisRound": null },
+    { "participantId": "pt2", "nickname": "Beto", "score": 1800, "lives": 2, "status": "ACTIVE", "isHost": false, "hasAnswered": true, "pointsThisRound": null },
+    { "participantId": "pt3", "nickname": "Caro", "score": 2900, "lives": 1, "status": "ACTIVE", "isHost": false, "hasAnswered": true, "pointsThisRound": null },
+    { "participantId": "pt4", "nickname": "Dani", "score": 900, "lives": 0, "status": "SPECTATOR", "isHost": false, "hasAnswered": false, "pointsThisRound": null }
+  ],
+  "ranking": [
+    { "position": 1, "participantId": "pt1", "nickname": "Ana", "score": 4682, "positionDelta": 0 },
+    { "position": 2, "participantId": "pt3", "nickname": "Caro", "score": 2900, "positionDelta": 1 },
+    { "position": 3, "participantId": "pt2", "nickname": "Beto", "score": 1800, "positionDelta": -1 },
+    { "position": 4, "participantId": "pt4", "nickname": "Dani", "score": 900, "positionDelta": 0 }
+  ],
+  "winner": null
+}

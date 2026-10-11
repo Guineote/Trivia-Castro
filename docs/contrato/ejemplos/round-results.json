@@ -1,0 +1,18 @@
+{
+  "gameId": "g8a3",
+  "round": {
+    "number": 3,
+    "type": "DOUBLE",
+    "question": {
+      "id": "q27",
+      "text": "¿Año del primer PlayStation?",
+      "correctOptionId": "o2"
+    }
+  },
+  "results": [
+    { "participantId": "pt1", "nickname": "Ana", "chosenOptionId": "o2", "isCorrect": true, "answerTimeMs": 4200, "pointsAwarded": 2232, "livesLost": 0 },
+    { "participantId": "pt3", "nickname": "Caro", "chosenOptionId": "o2", "isCorrect": true, "answerTimeMs": 9800, "pointsAwarded": 1700, "livesLost": 0 },
+    { "participantId": "pt2", "nickname": "Beto", "chosenOptionId": "o3", "isCorrect": false, "answerTimeMs": 6100, "pointsAwarded": 0, "livesLost": 1 },
+    { "participantId": "pt4", "nickname": "Dani", "chosenOptionId": null, "isCorrect": false, "answerTimeMs": null, "pointsAwarded": 0, "livesLost": 0 }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "version": 52,
+  "phase": "REVEAL",
+  "serverTime": "2026-09-04T18:30:27Z",
+  "round": {
+    "number": 3,
+    "totalRounds": 10,
+    "type": "DOUBLE",
+    "endsAt": "2026-09-04T18:30:31Z",
+    "question": {
+      "id": "q27",
+      "text": "¿Año del primer PlayStation?",
+      "categoryId": "c1",
+      "difficulty": "MEDIUM",
+      "options": [
+        { "id": "o1", "text": "1992", "isCorrect": false },
+        { "id": "o2", "text": "1994", "isCorrect": true },
+        { "id": "o3", "text": "1996", "isCorrect": false },
+        { "id": "o4", "text": "1998", "isCorrect": false }
+      ]
+    }
+  },
+  "me": {
+    "participantId": "pt1",
+    "score": 4682,
+    "lives": 2,
+    "status": "ACTIVE",
+    "hasAnswered": true,
+    "powers": [{ "powerType": "HINT" }, { "powerType": "SHIELD" }],
+    "activePower": null,
+    "lastResult": {
+      "chosenOptionId": "o2",
+      "isCorrect": true,
+      "answerTimeMs": 4200,
+      "basePoints": 800,
+      "speedBonus": 316,
+      "roundMultiplier": 2,
+      "powerMultiplier": 1,
+      "pointsAwarded": 2232,
+      "livesLost": 0,
+      "becameSpectator": false
+    }
+  },
+  "players": [
+    { "participantId": "pt1", "nickname": "Ana", "score": 4682, "lives": 2, "status": "ACTIVE", "isHost": true, "hasAnswered": true, "pointsThisRound": 2232 },
+    { "participantId": "pt2", "nickname": "Beto", "score": 1800, "lives": 2, "status": "ACTIVE", "isHost": false, "hasAnswered": true, "pointsThisRound": 0 },
+    { "participantId": "pt3", "nickname": "Caro", "score": 2900, "lives": 1, "status": "ACTIVE", "isHost": false, "hasAnswered": true, "pointsThisRound": 1700 },
+    { "participantId": "pt4", "nickname": "Dani", "score": 900, "lives": 0, "status": "SPECTATOR", "isHost": false, "hasAnswered": false, "pointsThisRound": null }
+  ],
+  "ranking": null,
+  "winner": null
+}

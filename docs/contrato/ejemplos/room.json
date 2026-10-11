@@ -1,0 +1,17 @@
+{
+  "code": "K7X4QM",
+  "status": "WAITING",
+  "hostParticipantId": "pt1",
+  "settings": {
+    "maxPlayers": 8,
+    "rounds": 10,
+    "lives": 3,
+    "categoryIds": []
+  },
+  "participants": [
+    { "participantId": "pt1", "nickname": "Ana", "isHost": true },
+    { "participantId": "pt2", "nickname": "Beto", "isHost": false },
+    { "participantId": "pt3", "nickname": "Caro", "isHost": false }
+  ],
+  "currentGameId": null
+}
