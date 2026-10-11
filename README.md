@@ -4,7 +4,7 @@ Videojuego web multijugador de trivia, inspirado en Kahoot y JKLM. Proyecto esco
 
 Se construye una **API propia desde cero** (HTTP + JSON) y un **Website** que la consume. La API ejecuta el juego: crea salas, administra jugadores y partidas, controla el tiempo de cada ronda, valida respuestas, calcula puntos y mantiene el ranking. El Website solo dibuja lo que el servidor le dice.
 
-> Nombre del juego: **Trivia Castro**. El `CLAUDE.md` raíz, `docs/` y `.env.example` todavía dicen "Trivia Chaos" (nombre anterior); se unificará con Jared.
+> Nombre oficial del juego: **Trivia Castro**.
 
 ## Estructura del repositorio
 

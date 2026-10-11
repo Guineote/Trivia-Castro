@@ -1,10 +1,10 @@
-> **Documento histórico de la etapa 2.** El contrato (`docs/contrato/`) manda. Este archivo puede mencionar rondas FAST/BOMB, 5 poderes o estados ALIVE/ELIMINATED que NO existen en el contrato. Nombre del juego: Trivia Chaos.
+> **Documento histórico de la etapa 2.** El contrato (`docs/contrato/`) manda. Este archivo puede mencionar rondas FAST/BOMB, 5 poderes o estados ALIVE/ELIMINATED que NO existen en el contrato. Nombre del juego: Trivia Castro.
 
-# Trivia Chaos — Pantallas del juego y su relación con la API
+# Trivia Castro — Pantallas del juego y su relación con la API
 
 **Versión del documento:** 1.0
 **Etapa:** Segunda entrega
-**Documento complementario:** `trivia-chaos-documentacion-api.md`
+**Documento complementario:** `trivia-castro-documentacion-api.md`
 
 ---
 
@@ -59,7 +59,7 @@ es un panel superpuesto. Tratarlas como pantallas separadas rompería el tempori
 | **Objetivo** | Punto de entrada. Elegir entre crear una partida o unirse a una existente. |
 | **Estado previo** | Ninguno |
 
-**Elementos visuales:** logotipo animado de Trivia Chaos, fondo con partículas, campo de
+**Elementos visuales:** logotipo animado de Trivia Castro, fondo con partículas, campo de
 nickname, selector de avatar (carrusel de 8 opciones), versión del juego en el pie.
 
 **Botones:** `CREAR PARTIDA` (primario), `UNIRSE` (secundario), `Cómo se juega` (terciario).
@@ -465,7 +465,7 @@ Pantalla 3 · Unirse
 Website  ──►  GET /api/v1/rooms/K7X4QM
                     │
                     ▼
-               Trivia Chaos API  ──►  Base de datos
+               Trivia Castro API  ──►  Base de datos
                     │                  SELECT room WHERE code = 'K7X4QM'
                     ◄──────────────────  room + participants
                     │
@@ -561,7 +561,7 @@ Pantalla 6 con dos opciones desvanecidas y el reloj corriendo
 
 | Requisito del profesor | Dónde queda cubierto |
 |---|---|
-| Documentación de la API | `trivia-chaos-documentacion-api.md`, §6–7 |
+| Documentación de la API | `trivia-castro-documentacion-api.md`, §6–7 |
 | Documentación de su uso | Ejemplos JSON por endpoint (§7) + flujo completo (§9) |
 | Pantallas según el diagrama de flujo | Este documento, §1 y §2 |
 | Relación pantalla ↔ API | Este documento, §3 y §4 |

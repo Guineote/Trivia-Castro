@@ -1,6 +1,6 @@
-> **Documento histórico de la etapa 2.** El contrato (`docs/contrato/`) manda. Este archivo puede mencionar rondas FAST/BOMB, 5 poderes o estados ALIVE/ELIMINATED que NO existen en el contrato. Nombre del juego: Trivia Chaos.
+> **Documento histórico de la etapa 2.** El contrato (`docs/contrato/`) manda. Este archivo puede mencionar rondas FAST/BOMB, 5 poderes o estados ALIVE/ELIMINATED que NO existen en el contrato. Nombre del juego: Trivia Castro.
 
-# Trivia Chaos — Documentación de la API
+# Trivia Castro — Documentación de la API
 
 **Versión del documento:** 1.0
 **Etapa:** Segunda entrega
@@ -10,11 +10,11 @@
 
 ## 1. Introducción
 
-Trivia Chaos es un videojuego web multijugador de trivia por salas. Varios jugadores se
+Trivia Castro es un videojuego web multijugador de trivia por salas. Varios jugadores se
 unen a una sala mediante un código y compiten respondiendo preguntas contrarreloj, con
 vidas, poderes y rondas especiales.
 
-La API de Trivia Chaos **no es un catálogo de preguntas**: es el motor del juego. Toda la
+La API de Trivia Castro **no es un catálogo de preguntas**: es el motor del juego. Toda la
 lógica que puede afectar el resultado de una partida vive en el servidor.
 
 ### 1.1 Qué hace la API
@@ -46,7 +46,7 @@ lógica que puede afectar el resultado de una partida vive en el servidor.
             │  proceso manual/programado, FUERA de la partida
             ▼
 ┌─────────────────────────────────────────────┐
-│           Trivia Chaos API (REST)           │
+│           Trivia Castro API (REST)           │
 │                                             │
 │  Capa HTTP      → controladores, validación │
 │  Capa dominio   → reglas del juego          │
@@ -950,7 +950,7 @@ consulta pesada a mitad de partida y hace la partida reproducible para depurar.
 sequenceDiagram
     participant H as Host (Website)
     participant J as Jugador (Website)
-    participant A as Trivia Chaos API
+    participant A as Trivia Castro API
     participant D as Base de datos
 
     H->>A: POST /players

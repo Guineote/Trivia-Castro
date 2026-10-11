@@ -1,4 +1,4 @@
-# Endpoints — Trivia Chaos (borrador v0.1)
+# Endpoints — Trivia Castro (borrador v0.1)
 
 Todas las rutas cuelgan de `/api/v1`. Convenciones, errores y enums: ver `README.md`. Los JSON completos están en `ejemplos/`.
 

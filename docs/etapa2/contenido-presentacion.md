@@ -9,7 +9,7 @@ Integrantes: Adler Antonio Calvillo Arellano y Jared López García · Universid
 
 ---
 
-# Trivia Chaos — Guion de la exposición (segunda etapa)
+# Trivia Castro — Guion de la exposición (segunda etapa)
 
 Contenido de las 15 diapositivas, separado del diseño. Sirve para reconstruir la
 presentación en Gamma, Canva, Pitch, Beautiful.ai, Figma Slides, otra IA o a mano.
@@ -34,12 +34,12 @@ Después pega el contenido de la sección siguiente.
 
 ## 1 · Portada
 
-- Título: **TRIVIA CHAOS**
+- Título: **TRIVIA CASTRO**
 - Subtítulo: Documentación de la API y de su uso. Pantallas del juego en función del diagrama de flujo.
 - Etiqueta: SEGUNDA ETAPA · EXPOSICIÓN
 - Pie: *[nombres del equipo] · [materia] · Universidad Panamericana · [fecha]*
 
-**Notas:** Trivia Chaos es un juego web multijugador de trivia por salas. En la primera etapa
+**Notas:** Trivia Castro es un juego web multijugador de trivia por salas. En la primera etapa
 presentamos la definición de la API y los diagramas de flujo. Hoy traemos la segunda: la
 documentación completa de la API y el diseño de las pantallas conectado a esa documentación.
 
@@ -86,7 +86,7 @@ Diagrama de cuatro piezas:
 API externa de trivia  (caja punteada, "solo importación")
         │  fuera de partida
         ▼
-TRIVIA CHAOS API
+TRIVIA CASTRO API
    Capa HTTP     → rutas, validación, códigos
    Capa dominio  → reglas del juego
    Capa datos    → repositorios

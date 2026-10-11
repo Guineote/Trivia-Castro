@@ -40,7 +40,7 @@ Propuesta = lo que ya asume el mock, para no obligar a Adler a cambiar nada. Apr
 | 12 | Salir en plena partida | `DELETE` responde 204, pero la fila del participante sigue en la partida (se queda sin responder y acaba de espectador) | M2 | Sí |
 | 13 | Códigos de error extra | Agregar `NOT_FOUND` (rutas inexistentes) e `INTERNAL_ERROR` (500) a la tabla del contrato | M1 | **Sí, acordar con Adler** |
 
-Dos discrepancias detectadas: el simulador acepta jugadores 2–16 y rondas 1–20, pero los **sliders** de la web son 2–12 y 1–15 (por eso propongo los de la web). Y el `README` raíz de Adler dice que el nombre del juego es **Trivia Castro**, mientras que tú dices que probablemente será **Trivia Chaos**: no afecta la lógica de la API, pero decídanlo antes de la exposición.
+Una discrepancia detectada: el simulador acepta jugadores 2–16 y rondas 1–20, pero los **sliders** de la web son 2–12 y 1–15 (por eso propongo los de la web).
 
 ## 4. Estructura de `api/`
 

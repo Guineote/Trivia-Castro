@@ -1,4 +1,4 @@
-# Pantallas — Trivia Chaos (especificación para el frontend)
+# Pantallas — Trivia Castro (especificación para el frontend)
 
 Basado en el contrato (`docs/contrato/`). Si hay diferencia, gana el contrato. Las pantallas 05–11 y 15 se alimentan **solo** de `GET /games/{id}/state`.
 
@@ -38,7 +38,7 @@ Extras: sonido (WebAudio, con mute persistente) y efecto CRT opcional. La pantal
 ---
 
 ## 01 · Home
-- Logo animado "TRIVIA CHAOS" (pixel, letras que caen con glitch), botones **CREAR SALA** y **UNIRSE**.
+- Logo animado "TRIVIA CASTRO" (pixel, letras que caen con glitch), botones **CREAR SALA** y **UNIRSE**.
 - Input de nickname (2–20). Al continuar: `POST /players` → guardar token.
 - Animación: fondo synthwave, logo con parpadeo tipo neón, "PRESS START" intermitente.
 - Errores: `error.code` de validación → mensaje inline con sacudida del input.
