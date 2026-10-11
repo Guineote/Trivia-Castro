@@ -12,6 +12,28 @@ El frontend ya recorre todo el juego contra un mock (ver [`web/README.md`](../..
 
 Los supuestos del mock están marcados como `SUPUESTO DE MOCK` en `web/src/mock/simulator.ts`: **no son reglas del juego**.
 
+## Decisiones del frente A (API implementada, 11 oct 2026) — **Adler: revisar**
+La API en `api/` toma estas decisiones donde el contrato no decía nada. **No se editó `docs/contrato/`**: si las aceptan, se pasan al contrato. Todas son cambiables en un solo lugar (`api/app/scoring.py`, `api/app/schemas.py`, `api/app/services/games.py`).
+
+| Tema | Decisión | ¿Afecta a `web/`? |
+|---|---|---|
+| Puntos base | EASY 500 · MEDIUM 800 · HARD 1100 | No |
+| Bonus de velocidad | `round(400·(20000 − t_ms)/20000)`, mínimo 0 | No |
+| Timeout | `lastResult` con `chosenOptionId` y `answerTimeMs` en `null`, 0 puntos, **−1 vida** (SHIELD la evita) | No (ya lo maneja) |
+| **SHIELD absorbido** | `lastResult` trae un campo **nuevo `powerUsed: PowerType \| null`** | **Sí:** añadir `powerUsed` al tipo `LastResult` de `web/src/api/types.ts` (hoy no rompe nada, es un campo extra) |
+| Poderes | Un solo poder por ronda; el segundo da `409 POWER_NOT_AVAILABLE`. `activePower` es `PowerType \| null` y se conserva hasta la siguiente `ROUND_INTRO` | No |
+| Rangos de `settings` | jugadores 2–12 · rondas 1–15 · vidas 1–5 (los sliders); fuera de rango → `422 VALIDATION_ERROR` | No |
+| Rondas DOUBLE | Cada tercera ronda | No |
+| `pointsThisRound` | Solo en `REVEAL`; `null` en `SCOREBOARD` | No |
+| Desempate | Por orden de unión a la sala | No |
+| Timestamps | ISO 8601 con **milisegundos** (`2026-09-04T18:30:06.250Z`) en `serverTime`, `endsAt` y `X-Server-Time` | No |
+| Estadísticas | `totalAnswers` cuenta solo rondas respondidas; promedio y más rápida valen `0` si nunca respondió; promedio/más rápida incluyen respuestas incorrectas | No |
+| Salir en plena partida | `DELETE` responde 204 pero el participante permanece (acaba de espectador) | No |
+| Errores extra | `NOT_FOUND` (404 de ruta inexistente) e `INTERNAL_ERROR` (500) | Mensaje genérico en la web |
+| Ids | Prefijo + entero: `p1`, `pt2`, `g3`, `q4`, `o5`, `c6` (ids de BD) | No |
+| `X-Server-Time` / CORS | En todas las respuestas (también 304 y errores); CORS permite `http://localhost:5173` y expone `ETag` y `X-Server-Time` | No |
+| Puerto / BD | API en `:8000`; MySQL en `127.0.0.1:3307` | No |
+
 ## Seguridad
 - [ ] `.env` está **trackeado** en el repo público (subido por web). Arreglar: `git rm --cached .env`, commit, y avisar a Jared. Si esos valores se usan en otro lado, rotarlos. En `docker-compose.yml`, publicar MySQL solo en `127.0.0.1:3306`. Añadir `.env.local` al `.gitignore`.
 
