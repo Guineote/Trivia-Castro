@@ -1,4 +1,4 @@
-# Trivia Chaos — Contexto del proyecto
+# Trivia Castro — Contexto del proyecto
 
 > Archivo de contexto inicial. Resume lo definido en la Etapa 1 (definición de la API y diagramas de flujo) y la Etapa 2 (documentación de la API y pantallas). **Estado (oct 2026): el frontend `web/` está completo contra un mock; `api/` está por construir** (ver sección 12). Equipo de 2 personas que trabajan en paralelo y luego integran.
 
@@ -6,7 +6,7 @@
 
 ## 1. Qué es
 
-Videojuego web multijugador de trivia, inspirado en Kahoot y JKLM. El nombre del juego será probablemente **"Trivia Chaos"** (nombre de la Etapa 1). "Trivia Castro" fue un nombre anterior del juego y es el que aparece en la documentación de la Etapa 2; al documentar, usar Trivia Chaos. **Nombre aún no 100 % confirmado.**
+Videojuego web multijugador de trivia, inspirado en Kahoot y JKLM. El nombre oficial del juego es **"Trivia Castro"** (confirmado). "Trivia Chaos" fue un nombre provisional de la Etapa 1.
 
 Se construye una **API propia desde cero** (HTTP + JSON) y un **Website** que la consume. La API administra toda la lógica y el estado del juego:
 
@@ -213,7 +213,6 @@ puntos = (base + bonus_velocidad) x mult_ronda x mult_poder
 - **API (`api/`, Jared): por construir.** Empieza por `docs/frontend/GUIA-PARA-LA-API.md` y `api/CLAUDE.md`.
 - Equipo de 2 personas. Falta la **integración real** (el frontend nunca ha hablado con la API de verdad).
 - Pendientes por definir (no están en la documentación):
-  - Nombre definitivo del producto. En el frontend se usa **Trivia Castro** (decisión de Adler); este archivo, `docs/` y `.env.example` aún dicen "Trivia Chaos": unificar con Jared.
   - Fórmula exacta del bonus de velocidad (**se deja pendiente a propósito; se definirá después**; el 316 del ejemplo es solo ilustrativo). El mock del frontend usa `400·(20 s − t)/20 s` solo para desarrollar.
   - Puntaje base de cada dificultad (niveles ya definidos: `EASY`, `MEDIUM`, `HARD`). El mock usa 500/800/1100 solo para desarrollar.
   - Pantalla "Apuesta": no está en el contrato ni en la spec del frontend; **no se construye**.

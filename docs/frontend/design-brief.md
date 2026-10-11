@@ -1,4 +1,4 @@
-# Design Brief — Trivia Chaos (frontend)
+# Design Brief — Trivia Castro (frontend)
 
 Dirección: **arcade retro**. Debe parecer una máquina arcade hecha a mano, no una plantilla web. Es la misma estética de la presentación de la etapa 2.
 

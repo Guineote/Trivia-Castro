@@ -1,4 +1,4 @@
-# Contrato compartido — Trivia Chaos (v0.2)
+# Contrato compartido — Trivia Castro (v0.2)
 
 > Bloque C del plan de trabajo. Es la **fuente de verdad** para el frente A (API) y el frente B (Website). Si algo del contrato cambia, se avisa al otro integrante y se actualiza aquí **antes** de tocar código.
 > Las decisiones D1 a D12 (sección 8) ya están **confirmadas**. Los puntos marcados como **[PROPUESTA]** en el texto corresponden a esas decisiones y ahora son parte del contrato.

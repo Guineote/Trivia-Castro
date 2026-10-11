@@ -1,4 +1,4 @@
-# Trivia Chaos — Plan de trabajo en paralelo
+# Trivia Castro — Plan de trabajo en paralelo
 
 > Complementa a `CLAUDE.md` (contexto y decisiones). **Entrega: la próxima semana** (día exacto por confirmar). El plan está pensado en 7 días corridos; si la fecha es antes, se recorta según la prioridad (sección 5).
 > **Responsables:** Jared lleva el frente A (API y datos) y Adler el frente B (Website). El bloque C (contrato compartido) es de ambos y ya está confirmado (`docs/contrato/`). Ver sección 7.
