@@ -81,9 +81,16 @@ Adler no debe depender de que la API esté lista.
 ## Pendientes abiertos con Jared (no asumir)
 Precisión en ms de timestamps · `lastResult` cuando no se responde/timeout · rangos de UI para settings (rondas, vidas, maxPlayers) · CORS (exponer `ETag`, `X-Server-Time`; permitir `Authorization`, `If-None-Match`) o usar proxy · puerto de la API · revancha tras FINAL · forma exacta de `activePower` (se asume `PowerType | null`) · día límite de entrega.
 
-## Cómo empezar (primera sesión)
-1. Lee `docs/contrato/` completo y `docs/frontend/*`.
-2. Inicializa `web/` con Vite + React + TS e instala las dependencias de arriba.
-3. Crea `tokens.css` desde el design brief, los tipos desde los ejemplos y el modo mock.
-4. Construye en este orden: layout + tokens → Home/Crear/Unirse → Lobby → ciclo de partida (intro, pregunta, reveal, scoreboard) → Final/podio → pulido y sonido.
-5. Cada pantalla se termina con su animación de entrada/salida antes de pasar a la siguiente.
+## Estado actual (qué existe ya)
+Todo lo de abajo funciona contra el mock (`VITE_USE_MOCK=true`). Detalle de comandos, rutas y mock en [`README.md`](README.md); estado por pantalla en `docs/frontend/pantallas-spec.md`.
+- Base: cliente HTTP (ETag/304, `X-Server-Time`, errores por `error.code`), tipos del contrato, mock + DevPanel, tokens y componentes arcade.
+- Pantallas: Home, Crear sala, Unirse, Lobby, ciclo de partida (intro, pregunta, reveal, marcador, final, espectador), estadísticas/resultados (`/partida/:id/resultados`), pantalla de error con fantasma pixel y banner de reconexión.
+- Extras: sonido WebAudio (`src/lib/sound.ts`, mute persistente, sin autoplay) y efecto CRT opcional (`src/lib/prefs.ts`).
+- Falta: revancha tras FINAL (pendiente con Jared) y probar contra la API real.
+
+## Cómo seguir
+1. Antes de tocar nada, lee `docs/contrato/` y `docs/frontend/PENDIENTES.md` (los supuestos del mock están marcados `SUPUESTO DE MOCK` en `src/mock/simulator.ts`).
+2. Si la API real difiere del contrato, arregla el tipo en `src/api/types.ts` y avisa; no edites `docs/contrato/` sin acuerdo.
+3. Cada pantalla nueva: animación de entrada/salida, `aria-live` para cambios de estado, 360 px de ancho mínimo, y una prueba en `src/test/` si tiene lógica.
+4. Si añades sonidos, defínelos en `SOUNDS` de `src/lib/sound.ts` y llámalos con `play()`; nunca audio automático antes de un gesto del usuario.
+5. Al terminar: `npm run build`, `npm run lint` y `npm test` sin errores, y actualiza `README.md` / `PENDIENTES.md` si cambió algo que Jared deba saber.

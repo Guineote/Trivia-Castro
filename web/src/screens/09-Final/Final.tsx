@@ -7,6 +7,7 @@ import { PixelButton } from '@/components/PixelButton/PixelButton'
 import { RollingNumber } from '@/components/RollingNumber/RollingNumber'
 import { Stage } from '@/components/Stage/Stage'
 import { dur, glitchIn } from '@/lib/motion'
+import { play } from '@/lib/sound'
 import { GameHud } from '../game/GameHud'
 import type { GameScreenProps } from '../game/types'
 import styles from './Final.module.css'
@@ -30,8 +31,8 @@ function PodiumBlock({ entry, isMe }: { entry: RankingEntry; isMe: boolean }) {
       >
         <span className={[styles.name, entry.position === 1 ? styles.winnerName : ''].join(' ')}>
           {entry.nickname}
-          {isMe ? ' (TU)' : ''}
         </span>
+        {isMe ? <span className={styles.me}>TU</span> : null}
         <span className={styles.score}>
           <RollingNumber value={entry.score} from={0} duration={0.9} delay={delay + 0.45} />
         </span>
@@ -50,7 +51,7 @@ function PodiumBlock({ entry, isMe }: { entry: RankingEntry; isMe: boolean }) {
 }
 
 /** 09 · FINAL: podio que se construye por bloques 3º → 2º → 1º, confeti en el ganador. */
-export default function Final({ state, maxLives }: GameScreenProps) {
+export default function Final({ gameId, state, maxLives }: GameScreenProps) {
   const navigate = useNavigate()
   const { me, winner } = state
   const ranking = state.ranking ?? []
@@ -67,7 +68,7 @@ export default function Final({ state, maxLives }: GameScreenProps) {
     const burst = (angle: number, x: number) =>
       confetti({ particleCount: 60, spread: 70, angle, origin: { x, y: 0.75 }, colors: CONFETTI_COLORS, disableForReducedMotion: true })
     const start = dur(BUILD_DELAY[1] + 0.5) * 1000
-    timers.push(setTimeout(() => { burst(60, 0.2); burst(120, 0.8) }, start))
+    timers.push(setTimeout(() => { burst(60, 0.2); burst(120, 0.8); play('fanfare') }, start))
     timers.push(setTimeout(() => { burst(75, 0.35); burst(105, 0.65) }, start + 700))
     timers.push(setTimeout(() => { burst(90, 0.5) }, start + 1400))
     return () => timers.forEach(clearTimeout)
@@ -111,9 +112,12 @@ export default function Final({ state, maxLives }: GameScreenProps) {
       ) : null}
 
       <motion.footer className={styles.actions} {...glitchIn('bottom', BUILD_DELAY[1] + 1.2)}>
+        <PixelButton color="cyan" onClick={() => navigate(`/partida/${gameId}/resultados`)}>
+          ESTADISTICAS
+        </PixelButton>
         {/* Revancha pendiente con Jared: por ahora se vuelve al inicio. */}
         <PixelButton color="magenta" onClick={() => navigate('/')}>
-          VOLVER AL INICIO
+          SALIR
         </PixelButton>
       </motion.footer>
     </Stage>

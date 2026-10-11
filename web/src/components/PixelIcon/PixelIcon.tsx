@@ -99,3 +99,30 @@ export function PowerIcon({ type, pixel = 4, className }: { type: PowerType; pix
   const sprite = POWER_SPRITES[type]
   return <PixelSprite rows={sprite.rows} palette={sprite.palette} pixel={pixel} className={className} />
 }
+
+// ── Personaje de las pantallas de error ─────────────────────────────────────
+const GHOST_ROWS = [
+  '...GGGGG...',
+  '..GGGGGGG..',
+  '.GGGGGGGGG.',
+  '.GGWWGWWGG.',
+  '.GGWBGWBGG.',
+  '.GGGGGGGGG.',
+  '.GGGKKKGGG.',
+  '.GGGGGGGGG.',
+  '.GGGGGGGGG.',
+  '.GG.GGG.GG.',
+  '.G...G...G.',
+] as const
+
+/** Fantasma pixel triste: el "personaje" de las pantallas de error. */
+export function PixelGhost({ pixel = 8, className }: { pixel?: number; className?: string }) {
+  return (
+    <PixelSprite
+      rows={GHOST_ROWS}
+      pixel={pixel}
+      className={className}
+      palette={{ G: 'var(--magenta)', W: '#ffffff', B: 'var(--violet)', K: '#000000' }}
+    />
+  )
+}

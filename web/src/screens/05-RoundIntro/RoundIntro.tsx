@@ -1,9 +1,11 @@
 import { motion } from 'motion/react'
+import { useEffect } from 'react'
 import { PowerSlot } from '@/components/PowerSlot/PowerSlot'
 import { Stage } from '@/components/Stage/Stage'
 import { Timer } from '@/components/Timer/Timer'
 import { dur, glitchIn } from '@/lib/motion'
 import { PHASE_DURATION_MS } from '@/lib/phases'
+import { play } from '@/lib/sound'
 import { GameHud } from '../game/GameHud'
 import { powerStates } from '../game/powers'
 import type { GameScreenProps } from '../game/types'
@@ -12,8 +14,16 @@ import styles from './RoundIntro.module.css'
 /** 05 · ROUND_INTRO (3 s): anuncia la ronda. Si es DOUBLE, banner x2 con destello y sacudida. */
 export default function RoundIntro({ state, maxLives }: GameScreenProps) {
   const { round, me } = state
+  const isDouble = round?.type === 'DOUBLE'
+
+  // El x2 suena justo cuando entra el banner.
+  useEffect(() => {
+    if (!isDouble) return
+    const id = setTimeout(() => play('double'), dur(0.85) * 1000)
+    return () => clearTimeout(id)
+  }, [isDouble])
+
   if (!round) return null
-  const isDouble = round.type === 'DOUBLE'
 
   return (
     <Stage spectator={me.status === 'SPECTATOR'}>

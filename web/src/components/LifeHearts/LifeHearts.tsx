@@ -1,6 +1,7 @@
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { dur } from '@/lib/motion'
+import { play } from '@/lib/sound'
 import { PixelHeart, PixelHeartHalf } from '../PixelIcon/PixelIcon'
 import styles from './LifeHearts.module.css'
 
@@ -79,6 +80,7 @@ export function LifeHearts({ lives, max, pixel = 4, from, className }: LifeHeart
     // Los corazones perdidos son los índices lives … before−1.
     const lost = Array.from({ length: before - lives }, (_, i) => lives + i)
     setBreaking((current) => [...current, ...lost])
+    play('lifeLost')
     // Sin limpiar el timeout: en StrictMode el efecto corre dos veces y el corazón roto no se retiraría.
     setTimeout(() => setBreaking((current) => current.filter((i) => !lost.includes(i))), dur(1.1) * 1000)
   }, [lives])

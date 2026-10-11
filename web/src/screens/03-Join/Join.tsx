@@ -6,10 +6,14 @@ import { isApiError, messageFromError } from '@/api/errors'
 import { getSession, updateSession } from '@/api/session'
 import { CodeInput } from '@/components/CodeInput/CodeInput'
 import { CODE_LENGTH, cleanCode } from '@/components/CodeInput/code'
+import { ErrorPanel } from '@/components/ErrorPanel/ErrorPanel'
 import { Panel } from '@/components/Panel/Panel'
 import { PixelButton } from '@/components/PixelButton/PixelButton'
 import { dur, glitchIn } from '@/lib/motion'
 import styles from './Join.module.css'
+
+/** Errores de unirse que no se arreglan reescribiendo el nombre. */
+const BLOCKING_CODES = ['ROOM_FULL', 'ROOM_NOT_FOUND', 'GAME_ALREADY_STARTED'] as const
 
 /** 03 · Unirse: código de 6 caracteres → POST /rooms/{code}/players (201 nuevo · 200 reconexión). */
 export default function Join() {
@@ -24,11 +28,17 @@ export default function Join() {
   // D3: con NICKNAME_TAKEN se pide otro nombre sin crear otro jugador.
   const [askNickname, setAskNickname] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // Sala llena / inexistente / partida ya iniciada: pantalla de error con personaje (spec 14).
+  const [blocking, setBlocking] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
 
   const complete = code.length === CODE_LENGTH
 
   function fail(err: unknown) {
+    if (BLOCKING_CODES.some((c) => isApiError(err, c))) {
+      setBlocking((err as { code: string }).code)
+      return
+    }
     setError(messageFromError(err))
     if (isApiError(err, 'NICKNAME_TAKEN')) setAskNickname(true)
     if (!reduce) void shake.start({ x: [0, -10, 10, -8, 8, -4, 4, 0], transition: { duration: dur(0.35) } })
@@ -57,6 +67,21 @@ export default function Join() {
   function onSubmit(event: FormEvent) {
     event.preventDefault()
     void join()
+  }
+
+  if (blocking) {
+    return (
+      <ErrorPanel
+        code={blocking}
+        onRetry={() => {
+          setBlocking(null)
+          setCode('')
+          setError(null)
+        }}
+        retryLabel="OTRO CODIGO"
+        onBack={() => navigate('/')}
+      />
+    )
   }
 
   return (

@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { useCountdown } from '@/lib/clock'
 import { LAST_SECONDS_WARNING, PHASE_DURATION_MS } from '@/lib/phases'
+import { play } from '@/lib/sound'
 import styles from './Timer.module.css'
 
 interface TimerProps {
@@ -21,6 +23,10 @@ export function Timer({ endsAt, durationMs = PHASE_DURATION_MS.QUESTION, segment
   const filled = remaining === null ? 0 : Math.min(segments, Math.ceil((remaining / durationMs) * segments))
   // El aviso rojo de los últimos 5 s solo tiene sentido en fases largas (no en INTRO/REVEAL, que duran ≤ 6 s).
   const urgent = durationMs > 10000 && seconds !== null && seconds > 0 && seconds <= LAST_SECONDS_WARNING
+  // "Tick" una vez por segundo en la cuenta final.
+  useEffect(() => {
+    if (urgent) play('tick')
+  }, [urgent, seconds])
   const announcement = seconds !== null && ANNOUNCE_AT.includes(seconds) ? `Quedan ${seconds} segundos` : ''
 
   return (

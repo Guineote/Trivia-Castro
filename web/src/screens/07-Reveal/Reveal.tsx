@@ -9,6 +9,7 @@ import { Stage } from '@/components/Stage/Stage'
 import { Timer } from '@/components/Timer/Timer'
 import { dur, glitchIn } from '@/lib/motion'
 import { PHASE_DURATION_MS } from '@/lib/phases'
+import { play } from '@/lib/sound'
 import { GameHud } from '../game/GameHud'
 import type { GameScreenProps } from '../game/types'
 import { OptionButton, type OptionStatus } from '../06-Question/OptionButton'
@@ -26,10 +27,16 @@ export default function Reveal({ state, maxLives }: GameScreenProps) {
   const spectator = me.status === 'SPECTATOR'
   const [revealed, setRevealed] = useState(false)
 
+  const hasResult = result !== null
+  const isCorrect = result?.isCorrect === true
   useEffect(() => {
-    const id = setTimeout(() => setRevealed(true), dur(NEUTRAL_SECONDS) * 1000)
+    const id = setTimeout(() => {
+      setRevealed(true)
+      // Suena al iluminarse la correcta, no antes (si no, se adelanta el resultado).
+      if (hasResult) play(isCorrect ? 'correct' : 'wrong')
+    }, dur(NEUTRAL_SECONDS) * 1000)
     return () => clearTimeout(id)
-  }, [])
+  }, [hasResult, isCorrect])
 
   if (!round || !question) return null
 

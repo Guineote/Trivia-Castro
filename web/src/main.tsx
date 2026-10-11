@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router'
 import './styles/fonts'
 import './styles/global.css'
+import { installAudioUnlock } from './lib/sound'
 import { router } from './router'
 
 const queryClient = new QueryClient({
@@ -18,6 +19,9 @@ const queryClient = new QueryClient({
 })
 
 async function bootstrap() {
+  // Sin autoplay: el audio se activa en el primer gesto del usuario.
+  installAudioUnlock()
+
   // Modo mock: cambia el transporte HTTP por el servidor falso antes de pintar nada.
   // La condición es estática → en producción sin VITE_USE_MOCK el mock no entra al bundle.
   if (import.meta.env.VITE_USE_MOCK === 'true') {

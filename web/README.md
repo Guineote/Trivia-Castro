@@ -18,7 +18,7 @@ Desde `web/`:
 | `npm run dev` | Servidor de desarrollo en `http://localhost:5173` |
 | `npm run build` | Typecheck (`tsc -b`) + build de producción en `dist/` |
 | `npm run lint` | oxlint |
-| `npm test` | Pruebas (vitest): fixtures vs contrato, reloj, simulador, cliente HTTP, lógica de pantallas |
+| `npm test` | Pruebas (vitest): fixtures vs contrato, reloj, simulador, cliente HTTP, lógica de pantallas, formato y preferencias |
 
 Antes de pedir revisión: `npm run build`, `npm run lint` y `npm test` sin errores.
 
@@ -69,8 +69,18 @@ Numeración de [`docs/frontend/pantallas-spec.md`](../docs/frontend/pantallas-sp
 | `/unirse` | 03 Unirse (`POST /rooms/{code}/players`, 201 nuevo / 200 reconexión) |
 | `/sala/:code` | 04 Lobby (polling de `GET /rooms/{code}` hasta `currentGameId`) |
 | `/partida/:gameId` | 05 Intro · 06 Pregunta · 07 Reveal · 08 Marcador · 09 Final, más variante espectador. **Una sola ruta:** la pantalla la decide `phase` del `GET /games/{id}/state` |
+| `/partida/:gameId/resultados` | 10 Estadísticas (tarjetas de jugador) y 15 Resultados detallados (tabla para proyector), con un selector de vista. Usa `GET /games/{id}/results` |
 
-Aún no están: estadísticas (10/15), revancha, sonido, efecto CRT.
+Pantalla 14 (sala llena / código inválido / partida ya iniciada): `ErrorPanel` con un fantasma pixel, titulado por `error.code`. Se muestra desde Unirse (`ROOM_FULL`, `ROOM_NOT_FOUND`, `GAME_ALREADY_STARTED`), el Lobby y la partida. El banner "RECONECTANDO..." (pantalla 13) aparece cuando el polling lleva 2 o más fallos seguidos, sin bloquear la pantalla.
+
+Aún no está: la revancha (el botón del final solo vuelve al inicio; pendiente con Jared) y la pantalla de Apuesta (no está definida en el contrato).
+
+## Sonido y efecto CRT
+
+Dos botones (arriba a la derecha; dentro de la barra superior durante la partida):
+
+- **Sonido:** bleeps de arcade generados con WebAudio (sin archivos de audio). No suena nada hasta el primer clic o tecla del usuario (política de autoplay). El mute persiste en `localStorage` (`trivia-castro.prefs`). Suena en: clic de botones, enviar respuesta, tick del timer en los últimos 5 s, acierto/fallo en el reveal, vida perdida, poder, desglose de puntos, entrada de jugadores al Lobby, inicio de partida, banner ×2, cortinilla y fanfarria final. El código está en `src/lib/sound.ts`.
+- **CRT:** scanlines y viñeta opcionales, apagado por defecto. Se desactiva solo con `prefers-reduced-motion`.
 
 ## Cómo está armado
 
@@ -81,7 +91,7 @@ src/
   screens/      una carpeta por pantalla (01-Home … 09-Final) y game/ (contenedor de la partida)
   components/   piezas arcade reutilizables (PixelButton, Panel, Timer, LifeHearts, PowerSlot, ScoreTally…)
   styles/       tokens.css (design brief), global.css, fuentes locales
-  lib/          reloj del servidor, fases, animación, ajustes
+  lib/          reloj del servidor, fases, animación, sonido (WebAudio), preferencias, formato, ajustes
   dev/          DevPanel
   test/         vitest
 ```

@@ -57,5 +57,5 @@ La API (FastAPI) vive en `api/`; sus instrucciones las documenta el frente A.
 ## Estado
 
 - Contrato compartido v0.2 (decisiones D1–D12 confirmadas).
-- Frontend: Home, Crear sala, Unirse, Lobby y el ciclo completo de partida (intro, pregunta, reveal, marcador, final, espectador) funcionando contra el mock. Faltan estadísticas, revancha, sonido y efectos.
+- Frontend: Home, Crear sala, Unirse, Lobby, el ciclo completo de partida (intro, pregunta, reveal, marcador, final, espectador), estadísticas y resultados detallados, pantallas de error, sonido y efecto CRT, todo funcionando contra el mock. Falta la revancha (pendiente con Jared).
 - API: pendiente de integrar con el frontend (ver "Qué necesita el frontend de la API real" en [`web/README.md`](web/README.md#qué-necesita-el-frontend-de-la-api-real)).

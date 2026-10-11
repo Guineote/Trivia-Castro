@@ -2,6 +2,28 @@
 
 Basado en el contrato (`docs/contrato/`). Si hay diferencia, gana el contrato. Las pantallas 05–11 y 15 se alimentan **solo** de `GET /games/{id}/state`.
 
+## Estado de implementación (frontend)
+
+| Spec | Pantalla | Ruta | Estado |
+|---|---|---|---|
+| 01 | Home | `/` | hecho |
+| 02 | Crear sala | `/crear` | hecho |
+| 03 | Unirse | `/unirse` | hecho |
+| 04 | Lobby | `/sala/:code` | hecho |
+| 05 | Round intro | `/partida/:gameId` (`phase = ROUND_INTRO`) | hecho |
+| 06 | Pregunta | `/partida/:gameId` (`QUESTION`) | hecho |
+| 07 | Reveal | `/partida/:gameId` (`REVEAL`) | hecho |
+| 08 | Scoreboard | `/partida/:gameId` (`SCOREBOARD`) | hecho |
+| 09 | Final / podio | `/partida/:gameId` (`FINAL`) | hecho |
+| 10 | Stats | `/partida/:gameId/resultados` (vista TARJETAS) | hecho |
+| 11 | Salir / volver | botones de Final y Resultados | parcial: sin revancha |
+| 12 | Espectador | variante de 06–08 (`me.status = SPECTATOR`) | hecho |
+| 13 | Error / reconexión | banner RECONECTANDO + `UNAUTHORIZED` → Home | hecho |
+| 14 | Sala llena / código inválido / ya iniciada | `ErrorPanel` | hecho |
+| 15 | Resultados detallados | `/partida/:gameId/resultados` (vista TABLA) | hecho |
+
+Extras: sonido (WebAudio, con mute persistente) y efecto CRT opcional. La pantalla "Apuesta" del `CLAUDE.md` raíz no existe en contrato ni en esta spec y no se construye.
+
 ## Navegación general
 ```
 01 Home → 02 Crear sala ─┐

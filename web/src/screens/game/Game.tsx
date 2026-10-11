@@ -1,13 +1,14 @@
 import { useEffect } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router'
 import { useGameState } from '@/api/hooks'
-import { ApiError, errorMessage } from '@/api/errors'
+import { ApiError } from '@/api/errors'
 import { useSession } from '@/api/session'
 import type { GameState } from '@/api/types'
 import { ErrorPanel } from '@/components/ErrorPanel/ErrorPanel'
 import { PhaseCurtain } from '@/components/PhaseCurtain/PhaseCurtain'
 import { ReconnectBanner } from '@/components/ReconnectBanner/ReconnectBanner'
 import { setBackground } from '@/lib/background'
+import { claimInlineTools } from '@/lib/prefs'
 import RoundIntro from '../05-RoundIntro/RoundIntro'
 import Question from '../06-Question/Question'
 import Reveal from '../07-Reveal/Reveal'
@@ -46,6 +47,9 @@ export default function Game() {
   const { shown, curtainKey } = useShownState(live)
   const maxLives = useMaxLives(live?.me.lives)
 
+  // El HUD de la partida lleva sus propios botones de sonido/CRT: se ocultan los flotantes.
+  useEffect(() => claimInlineTools(), [])
+
   // Fondo con menos intensidad mientras se lee la pregunta.
   const phase = shown?.phase
   useEffect(() => {
@@ -82,7 +86,7 @@ export default function Game() {
         break
     }
   } else if (fatalError) {
-    screen = <ErrorPanel message={errorMessage(fatalError.code)} onBack={() => navigate('/')} />
+    screen = <ErrorPanel code={fatalError.code} onBack={() => navigate('/')} />
   } else {
     screen = (
       <main className={styles.center}>
