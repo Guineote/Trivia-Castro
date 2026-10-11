@@ -1,0 +1,46 @@
+/* Tokens de Trivia Castro — arcade retro. Fuente: docs/frontend/design-brief.md */
+:root {
+  /* Color */
+  --bg: #0d0b1f;
+  --bg-2: #17133a;
+  --bg-3: #221c52;
+  --ink: #f5f1e6;
+  --ink-dim: #9d98c7;
+  --magenta: #ff2e93;
+  --cyan: #19e3ff;
+  --yellow: #ffd23f;
+  --green: #3dff8b; /* reservado a "correcto" */
+  --red: #ff4d4d; /* reservado a pérdida de vida / fallo */
+  --violet: #7a5cff;
+  --black: #000;
+
+  /* Opciones de respuesta: color fijo + símbolo (▲ ● ■ ◆) */
+  --opt-a: var(--magenta);
+  --opt-b: var(--cyan);
+  --opt-c: var(--yellow);
+  --opt-d: var(--violet);
+
+  /* Forma */
+  --border: 4px;
+  --shadow-hard: 6px 6px 0 var(--black);
+  --shadow-hard-sm: 3px 3px 0 var(--black);
+
+  /* Tipografía */
+  --font-title: 'Press Start 2P', monospace;
+  --font-body: 'JetBrains Mono', monospace;
+  --fs-question: clamp(22px, 3.2vw, 44px);
+
+  /* Movimiento. --t-scale > 1 = cámara lenta (lo cambia el DevPanel) */
+  --t-scale: 1;
+  --dur-micro: calc(150ms * var(--t-scale));
+  --dur-glitch: calc(160ms * var(--t-scale));
+  --dur-transition: calc(400ms * var(--t-scale));
+  --dur-key: calc(900ms * var(--t-scale));
+  --ease-snap: cubic-bezier(0.2, 0.9, 0.3, 1.2);
+
+  /* Capas */
+  --z-bg: 0;
+  --z-content: 1;
+  --z-overlay: 50;
+  --z-dev: 1000;
+}

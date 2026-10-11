@@ -1,6 +1,6 @@
-# CLAUDE.md — Frontend (web/) · Trivia Chaos
+# CLAUDE.md — Frontend (web/) · Trivia Castro
 
-> Nombre del juego: **Trivia Chaos** (en docs viejos aparece "Trivia Castro"). Equipo: Adler Antonio Calvillo Arellano (frontend) y Jared López García (API).
+> Nombre del juego: **Trivia Castro** (Adler lo confirmó; el contexto raíz y docs viejos dicen "Trivia Chaos"). Equipo: Adler Antonio Calvillo Arellano (frontend) y Jared López García (API).
 
 Este archivo es el contexto de Claude Code para el **frontend**. Se lanza `claude` desde `web/`; también se carga el `CLAUDE.md` raíz del repo (reglas generales del proyecto). Si algo aquí contradice al raíz, avisa a Adler antes de decidir.
 

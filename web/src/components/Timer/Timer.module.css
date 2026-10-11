@@ -1,0 +1,70 @@
+.timer {
+  --timer-color: var(--cyan);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.number {
+  min-width: 2.4ch;
+  font-family: var(--font-title);
+  font-size: clamp(24px, 4vw, 48px);
+  font-size: round(down, clamp(24px, 4vw, 48px), 8px);
+  line-height: 1;
+  color: var(--timer-color);
+  text-shadow: 4px 4px 0 var(--black);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.bar {
+  display: flex;
+  flex: 1;
+  gap: 3px;
+  height: 28px;
+  padding: 3px;
+  background: var(--bg);
+  border: var(--border) solid var(--black);
+  box-shadow: var(--shadow-hard-sm);
+}
+
+.bar span {
+  flex: 1;
+  background: var(--timer-color);
+}
+
+.bar .off {
+  background: var(--bg-3);
+}
+
+.urgent {
+  --timer-color: var(--red);
+}
+
+/* Últimos segundos: pulsa y vibra levemente. */
+.urgent .number {
+  animation: urgent-pulse 500ms steps(2, jump-none) infinite;
+}
+
+.urgent .bar {
+  animation: urgent-shake 250ms steps(2, jump-none) infinite;
+}
+
+@keyframes urgent-pulse {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.35;
+  }
+}
+
+@keyframes urgent-shake {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(2px);
+  }
+}

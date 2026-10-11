@@ -23,7 +23,7 @@ Basado en el contrato (`docs/contrato/`). Si hay diferencia, gana el contrato. L
 
 ## 02 · Crear sala
 - Ajustes: máx. jugadores, rondas, vidas, categorías (rangos pendientes con Jared). Valores por defecto del contrato (ej. 8 / 10 / 3).
-- Acción: `POST /rooms` y luego crear sala → navegar al Lobby con el código.
+- Acción: `POST /rooms` (por D2 el creador queda como host y primer participante; la respuesta trae `code` y su `participantId`) → navegar al Lobby con el código.
 - Animación: sliders pixelados con contador numérico que "rueda".
 
 ## 03 · Unirse

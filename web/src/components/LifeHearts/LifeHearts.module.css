@@ -1,0 +1,42 @@
+.hearts {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.slot {
+  position: relative;
+  display: inline-block;
+  flex: none;
+}
+
+.slot > svg {
+  display: block;
+}
+
+.breaking {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.half {
+  position: absolute;
+  inset: 0;
+}
+
+.half > svg {
+  display: block;
+}
+
+.particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  background: var(--red);
+  border: 2px solid var(--black);
+}
