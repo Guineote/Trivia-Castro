@@ -14,7 +14,7 @@
 ## 2. Antes de la primera línea de código
 
 1. Commit de `docker-compose.yml` (3307, solo en 127.0.0.1) y de `.env.example` con la variable de conexión:
-   `DATABASE_URL=mysql+pymysql://trivia_user:change_me@127.0.0.1:3307/trivia_chaos`
+   `DATABASE_URL=mysql+pymysql://trivia_user:change_me@127.0.0.1:3307/trivia_castro`
 2. Agrega `.env.local` al `.gitignore` raíz.
 3. Sube `api`, abre PR hacia `main` y fusiónalo. Después trabaja en ramas `feat/api-<tema>` desde `main`.
 4. Python 3.11+ y un entorno virtual en `api/.venv`. En PowerShell, un comando por línea (no admite `&&`).
@@ -133,7 +133,7 @@ Los días suponen entrega el viernes 16; ajusta cuando confirmen la fecha. Cada 
 - **Unitarias (sin base de datos):** puntos (el ejemplo del contrato: (800 + 316) × 2 = 2232), bono de velocidad, multiplicadores, transiciones de fase, `positionDelta`.
 - **De servicio con reloj falso:** respuesta duplicada, respuesta tardía, timeout con y sin SHIELD, paso a espectador, dos peticiones simultáneas en el borde de una fase.
 - **De forma:** comparar las claves y los enums de cada respuesta real con `docs/contrato/ejemplos/*.json`, como hace `web/src/test/fixtures.test.ts`. Detecta desvíos antes de integrar.
-- **Base de pruebas separada** (`trivia_chaos_test` en el mismo contenedor), porque el índice único y `FOR UPDATE` se comportan distinto en SQLite.
+- **Base de pruebas separada** (`trivia_castro_test` en el mismo contenedor), porque el índice único y `FOR UPDATE` se comportan distinto en SQLite.
 - **Humo con curl.exe** (en PowerShell hay que escribir `curl.exe`): ejemplos en la guía, §8.
 
 ## 9. Riesgos
