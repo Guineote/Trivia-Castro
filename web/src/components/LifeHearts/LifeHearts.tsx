@@ -9,6 +9,8 @@ interface LifeHeartsProps {
   /** Vidas con las que empezó (settings.lives). Los corazones vacíos se dibujan hasta aquí. */
   max?: number
   pixel?: number
+  /** Vidas que tenía antes (REVEAL): al montar, los corazones perdidos se rompen en pantalla. */
+  from?: number
   className?: string
 }
 
@@ -65,9 +67,9 @@ function BreakingHeart({ pixel }: { pixel: number }) {
 }
 
 /** Vidas como corazones pixel. Al perder una, ese corazón se rompe (shake + partículas + fade). */
-export function LifeHearts({ lives, max, pixel = 4, className }: LifeHeartsProps) {
-  const total = Math.max(max ?? lives, lives)
-  const previous = useRef(lives)
+export function LifeHearts({ lives, max, pixel = 4, from, className }: LifeHeartsProps) {
+  const total = Math.max(max ?? lives, lives, from ?? 0)
+  const previous = useRef(from ?? lives)
   const [breaking, setBreaking] = useState<number[]>([])
 
   useEffect(() => {
@@ -77,8 +79,8 @@ export function LifeHearts({ lives, max, pixel = 4, className }: LifeHeartsProps
     // Los corazones perdidos son los índices lives … before−1.
     const lost = Array.from({ length: before - lives }, (_, i) => lives + i)
     setBreaking((current) => [...current, ...lost])
-    const timer = setTimeout(() => setBreaking((current) => current.filter((i) => !lost.includes(i))), dur(1.1) * 1000)
-    return () => clearTimeout(timer)
+    // Sin limpiar el timeout: en StrictMode el efecto corre dos veces y el corazón roto no se retiraría.
+    setTimeout(() => setBreaking((current) => current.filter((i) => !lost.includes(i))), dur(1.1) * 1000)
   }, [lives])
 
   return (

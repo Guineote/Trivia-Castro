@@ -1,0 +1,156 @@
+.layout {
+  display: grid;
+  flex: 1;
+  gap: 24px;
+  align-content: start;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.question {
+  padding: 12px 14px;
+  background: var(--bg);
+  border: var(--border) solid var(--black);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(16px, 2.2vw, 28px);
+  line-height: 1.25;
+}
+
+.options {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-top: 18px;
+}
+
+.resultBody {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.headline {
+  font-family: var(--font-title);
+  font-size: 24px;
+  line-height: 1.2;
+  text-shadow: 4px 4px 0 var(--black);
+}
+
+.good {
+  color: var(--green);
+}
+
+.bad {
+  color: var(--red);
+}
+
+.dim {
+  color: var(--ink-dim);
+}
+
+.note,
+.noteBad {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.note {
+  color: var(--cyan);
+}
+
+.noteBad {
+  color: var(--red);
+}
+
+.spectatorNote {
+  color: var(--ink-dim);
+  font-weight: 700;
+}
+
+.points {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pointsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.gain {
+  color: var(--green);
+  font-family: var(--font-title);
+  font-size: 16px;
+  text-shadow: 3px 3px 0 var(--black);
+}
+
+.none {
+  color: var(--ink-dim);
+}
+
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 1.4fr) minmax(300px, 1fr);
+    gap: 32px;
+  }
+}
+
+/* Móvil: el REVEAL dura 4 s, no hay tiempo de hacer scroll. Todo en una pantalla de 360×640. */
+@media (max-width: 519px) {
+  .layout {
+    gap: 8px;
+  }
+
+  .left {
+    gap: 8px;
+  }
+
+  .question {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+
+  .options {
+    gap: 6px;
+  }
+
+  .right {
+    gap: 0;
+    padding-top: 22px;
+  }
+
+  .resultBody {
+    gap: 8px;
+  }
+
+  .headline {
+    font-size: 16px;
+  }
+
+  .points {
+    display: none;
+  }
+}

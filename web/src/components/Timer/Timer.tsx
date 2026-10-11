@@ -19,7 +19,8 @@ export function Timer({ endsAt, durationMs = PHASE_DURATION_MS.QUESTION, segment
   const remaining = useCountdown(endsAt, 100)
   const seconds = remaining === null ? null : Math.ceil(remaining / 1000)
   const filled = remaining === null ? 0 : Math.min(segments, Math.ceil((remaining / durationMs) * segments))
-  const urgent = seconds !== null && seconds > 0 && seconds <= LAST_SECONDS_WARNING
+  // El aviso rojo de los últimos 5 s solo tiene sentido en fases largas (no en INTRO/REVEAL, que duran ≤ 6 s).
+  const urgent = durationMs > 10000 && seconds !== null && seconds > 0 && seconds <= LAST_SECONDS_WARNING
   const announcement = seconds !== null && ANNOUNCE_AT.includes(seconds) ? `Quedan ${seconds} segundos` : ''
 
   return (

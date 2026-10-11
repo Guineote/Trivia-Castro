@@ -23,5 +23,8 @@
 ## Spec de pantallas
 - [x] **Pantalla 02 (Crear sala) corregida:** la acción es solo `POST /rooms` (por D2 el creador queda como host y primer participante, y la respuesta trae su `participantId`); no hay un segundo paso "crear sala". Corregido en `pantallas-spec.md`.
 
+- [ ] **Pantalla 08 (Scoreboard) vs contrato:** la spec dice mostrar los puntos de la ronda (`pointsThisRound`) en el marcador, pero el contrato los manda en `null` durante `SCOREBOARD` (solo vienen en `REVEAL`). Gana el contrato: los puntos ganados por jugador se muestran en el REVEAL (07) y el marcador solo anima el puntaje propio (`me.lastResult.pointsAwarded`). Si se quiere la ganancia de todos en el marcador, pedir a Jared que `pointsThisRound` siga poblado en `SCOREBOARD`.
+- [ ] **Estadísticas (10/15) y revancha (11):** la pantalla Final solo ofrece "VOLVER AL INICIO"; falta la vista de `GET /games/{id}/results` y la revancha sigue pendiente con Jared.
+
 ## Inconsistencias de la presentación
 - La diapositiva 15 promete rondas "rápida" y "bomba" en v1; el contrato solo tiene `NORMAL` y `DOUBLE`. Ajustar la diapositiva o acordar con Jared.

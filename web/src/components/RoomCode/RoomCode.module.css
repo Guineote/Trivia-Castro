@@ -1,0 +1,35 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.caption {
+  color: var(--ink-dim);
+  font-family: var(--font-title);
+  font-size: 8px;
+}
+
+.blocks {
+  display: flex;
+  gap: clamp(4px, 1.2vw, 10px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.block {
+  display: grid;
+  place-items: center;
+  width: clamp(40px, 9vw, 72px);
+  height: clamp(56px, 12vw, 96px);
+  background: var(--black);
+  color: var(--yellow);
+  border: var(--border) solid var(--violet);
+  box-shadow: var(--shadow-hard-sm);
+  font-family: var(--font-title);
+  font-size: clamp(24px, 5.6vw, 48px);
+  font-size: round(down, clamp(24px, 5.6vw, 48px), 8px);
+  text-shadow: 3px 3px 0 var(--magenta);
+}

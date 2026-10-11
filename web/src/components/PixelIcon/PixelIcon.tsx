@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
-import { OPTION_COLOR, SYMBOLS, type OptionSlot } from './options'
+import { CHECK_ROWS, CROSS_ROWS, OPTION_COLOR, POWER_SPRITES, SYMBOLS, type OptionSlot } from './options'
+import type { PowerType } from '@/api/types'
 
 /**
  * Sprites pixel-art propios (sin librería de íconos ni emojis).
@@ -84,4 +85,17 @@ export function PixelHeartHalf({ side, pixel = 4 }: { side: 'left' | 'right'; pi
 // ── Símbolos de las opciones (datos en options.ts) ─────────────────────────
 export function OptionSymbol({ slot, pixel = 4, className }: { slot: OptionSlot; pixel?: number; className?: string }) {
   return <PixelSprite rows={SYMBOLS[slot]} pixel={pixel} className={className} palette={{ X: OPTION_COLOR[slot] }} />
+}
+
+export function PixelCheck({ color = 'var(--green)', pixel = 4, className }: { color?: string; pixel?: number; className?: string }) {
+  return <PixelSprite rows={CHECK_ROWS} pixel={pixel} className={className} palette={{ X: color }} />
+}
+
+export function PixelCross({ color = 'var(--red)', pixel = 4, className }: { color?: string; pixel?: number; className?: string }) {
+  return <PixelSprite rows={CROSS_ROWS} pixel={pixel} className={className} palette={{ X: color }} />
+}
+
+export function PowerIcon({ type, pixel = 4, className }: { type: PowerType; pixel?: number; className?: string }) {
+  const sprite = POWER_SPRITES[type]
+  return <PixelSprite rows={sprite.rows} palette={sprite.palette} pixel={pixel} className={className} />
 }

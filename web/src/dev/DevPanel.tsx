@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState, type ReactNode } from 'react'
+import { useNavigate } from 'react-router'
 import { api } from '@/api/endpoints'
 import { useGameState } from '@/api/hooks'
 import { clearSession, getSession, saveSession, updateSession, useSession } from '@/api/session'
@@ -40,6 +41,7 @@ function Row({ children }: { children: ReactNode }) {
 /** Panel de desarrollo (solo en `npm run dev`). Atajo: tecla ` (acento grave). */
 export default function DevPanel() {
   const qc = useQueryClient()
+  const navigate = useNavigate()
   const controls = useDevControls()
   const session = useSession()
   const stats = useHttpStats()
@@ -98,6 +100,7 @@ export default function DevPanel() {
     setDevControls({ activeGameId: started.gameId, pinnedFixture: null })
     qc.removeQueries({ queryKey: ['gameState'] })
     setMessage(`Sala ${started.code} · partida ${started.gameId}`)
+    navigate(`/partida/${started.gameId}`)
   }
 
   const isSpectator = state?.me.status === 'SPECTATOR'
@@ -242,7 +245,10 @@ export default function DevPanel() {
             <Row>
               <select
                 value={controls.pinnedFixture ?? ''}
-                onChange={(e) => setDevControls({ pinnedFixture: e.target.value || null, pinEpoch: controls.pinEpoch + 1 })}
+                onChange={(e) => {
+                  setDevControls({ pinnedFixture: e.target.value || null, pinEpoch: controls.pinEpoch + 1 })
+                  if (e.target.value) navigate('/partida/fixture')
+                }}
               >
                 <option value="">— partida real del mock —</option>
                 {Object.keys(STATE_FIXTURES).map((name) => (
@@ -277,7 +283,7 @@ export default function DevPanel() {
               onClick={() => {
                 resetMockWorld()
                 clearSession()
-                location.reload()
+                location.assign('/')
               }}
             >
               REINICIAR MUNDO MOCK

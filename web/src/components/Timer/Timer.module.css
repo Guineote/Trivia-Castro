@@ -68,3 +68,9 @@
     transform: translateX(2px);
   }
 }
+
+@media (max-width: 519px) {
+  .bar {
+    height: 20px;
+  }
+}
