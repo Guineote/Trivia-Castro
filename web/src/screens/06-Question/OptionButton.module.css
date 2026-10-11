@@ -1,0 +1,215 @@
+.option {
+  --opt-bg: var(--magenta);
+  --opt-ink: var(--ink);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  min-height: 72px;
+  padding: 10px 16px 10px 10px;
+  background: var(--opt-bg);
+  color: var(--opt-ink);
+  border: var(--border) solid var(--black);
+  border-radius: 0;
+  box-shadow: var(--shadow-hard);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(18px, 2.4vw, 28px);
+  line-height: 1.2;
+  text-align: left;
+  transition:
+    transform var(--dur-micro) var(--ease-snap),
+    box-shadow var(--dur-micro) var(--ease-snap),
+    opacity var(--dur-transition) linear,
+    filter var(--dur-transition) linear,
+    background-color var(--dur-transition) linear;
+  touch-action: manipulation;
+}
+
+.A {
+  --opt-bg: var(--opt-a);
+}
+
+.B {
+  --opt-bg: var(--opt-b);
+  --opt-ink: var(--bg);
+}
+
+.C {
+  --opt-bg: var(--opt-c);
+  --opt-ink: var(--bg);
+}
+
+.D {
+  --opt-bg: var(--opt-d);
+}
+
+.symbol {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  background: var(--black);
+}
+
+.compact {
+  min-height: 48px;
+  padding: 6px 12px 6px 6px;
+  font-size: clamp(14px, 1.8vw, 20px);
+  box-shadow: var(--shadow-hard-sm);
+}
+
+.compact .symbol {
+  width: 36px;
+  height: 36px;
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.key {
+  align-self: flex-start;
+  color: inherit;
+  opacity: 0.7;
+  font-family: var(--font-title);
+  font-size: 8px;
+}
+
+.badge {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: var(--black);
+  color: var(--ink);
+  font-family: var(--font-title);
+  font-size: 8px;
+  line-height: 1;
+}
+
+/* Elegible */
+.idle:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 6px 8px 0 var(--black);
+}
+
+.idle:active:not(:disabled) {
+  transform: translate(6px, 6px);
+  box-shadow: 0 0 0 var(--black);
+  transition-duration: 40ms;
+}
+
+/* Elegida y enviada: se ve presionada; las demás se atenúan. */
+.chosen {
+  transform: translate(6px, 6px);
+  box-shadow: 0 0 0 var(--black);
+  outline: 4px solid var(--ink);
+  outline-offset: -4px;
+}
+
+.dimmed {
+  opacity: 0.4;
+  filter: saturate(0.4);
+  box-shadow: var(--shadow-hard-sm);
+}
+
+/* Eliminada por la pista: tachada y apagada. */
+.removed {
+  opacity: 0.3;
+  filter: grayscale(1);
+  border-style: dashed;
+  box-shadow: none;
+  text-decoration: line-through;
+  text-decoration-thickness: 4px;
+}
+
+/* REVEAL: primero se neutraliza todo… */
+.neutral,
+.neutralChosen {
+  --opt-bg: var(--bg-3);
+  --opt-ink: var(--ink-dim);
+  box-shadow: var(--shadow-hard-sm);
+}
+
+.neutralChosen {
+  outline: 4px dashed var(--ink);
+  outline-offset: -4px;
+}
+
+/* …luego se ilumina la correcta (verde, con pulso) y la elegida incorrecta tiembla en rojo. */
+.correct {
+  --opt-bg: var(--green);
+  --opt-ink: var(--bg);
+  animation: pulse-correct 0.7s steps(2, jump-none) 3;
+}
+
+.wrong {
+  --opt-bg: var(--red);
+  --opt-ink: var(--ink);
+  animation: shake-wrong 0.45s linear 1;
+}
+
+@keyframes pulse-correct {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.03);
+  }
+}
+
+@keyframes shake-wrong {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-10px);
+  }
+  40% {
+    transform: translateX(10px);
+  }
+  60% {
+    transform: translateX(-6px);
+  }
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+.option:disabled {
+  cursor: default;
+}
+
+@media (max-width: 519px) {
+  .option:not(.compact) {
+    min-height: 64px;
+    gap: 12px;
+    font-size: 18px;
+  }
+
+  .option:not(.compact) .symbol {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (max-width: 519px) {
+  .compact {
+    min-height: 44px;
+    padding: 4px 8px 4px 4px;
+    font-size: 15px;
+  }
+
+  .compact .symbol {
+    width: 32px;
+    height: 32px;
+  }
+}

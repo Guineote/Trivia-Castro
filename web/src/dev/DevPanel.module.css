@@ -1,0 +1,137 @@
+.fab {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: var(--z-dev);
+  padding: 8px 10px;
+  background: var(--black);
+  color: var(--green);
+  border: 2px solid var(--green);
+  font-family: var(--font-title);
+  font-size: 10px;
+}
+
+.panel {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: var(--z-dev);
+  width: min(380px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  padding: 12px;
+  background: var(--black);
+  color: var(--ink);
+  border: 3px solid var(--green);
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  color: var(--green);
+  font-family: var(--font-title);
+  font-size: 10px;
+}
+
+.close {
+  padding: 4px 8px;
+  background: none;
+  border: 2px solid var(--green);
+  color: var(--green);
+  font-size: 10px;
+}
+
+.section {
+  padding: 8px 0;
+  border-top: 2px dashed var(--bg-3);
+}
+
+.heading {
+  margin-bottom: 6px;
+  color: var(--yellow);
+  font-size: 8px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.row > button {
+  min-height: 32px !important;
+  padding: 8px 10px !important;
+  font-size: 8px !important;
+  box-shadow: 3px 3px 0 var(--bg-3) !important;
+}
+
+.monitor {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 10px;
+  margin: 0;
+}
+
+.monitor dt {
+  color: var(--ink-dim);
+}
+
+.monitor dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.good {
+  color: var(--green);
+}
+
+.bad {
+  color: var(--red);
+  font-weight: 700;
+}
+
+.hint {
+  margin: 0 0 6px;
+  color: var(--ink-dim);
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.link {
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--cyan);
+  font-family: var(--font-body);
+  font-size: 12px;
+  text-decoration: underline;
+}
+
+.message {
+  margin: 8px 0 0;
+  padding: 6px;
+  border: 2px solid var(--cyan);
+  color: var(--cyan);
+}
+
+.panel select {
+  max-width: 190px;
+  padding: 4px;
+  background: var(--bg-2);
+  color: var(--ink);
+  border: 2px solid var(--violet);
+  font-family: var(--font-body);
+  font-size: 12px;
+}

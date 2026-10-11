@@ -1,0 +1,25 @@
+.center {
+  position: relative;
+  z-index: var(--z-content);
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 24px 16px;
+}
+
+.loading {
+  font-family: var(--font-title);
+  font-size: 16px;
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+  0%,
+  69% {
+    opacity: 1;
+  }
+  70%,
+  99% {
+    opacity: 0.35;
+  }
+}

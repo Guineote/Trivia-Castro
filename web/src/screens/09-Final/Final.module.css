@@ -1,0 +1,140 @@
+.top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.headline {
+  color: var(--cyan);
+  font-size: clamp(16px, 4vw, 32px);
+  font-size: round(down, clamp(16px, 4vw, 32px), 8px);
+  text-shadow: 4px 4px 0 var(--black);
+}
+
+.verdict {
+  min-height: 1.2em;
+  color: var(--yellow);
+  font-family: var(--font-title);
+  font-size: clamp(16px, 3.6vw, 40px);
+  font-size: round(down, clamp(16px, 3.6vw, 40px), 8px);
+  text-shadow: 4px 4px 0 var(--black);
+}
+
+.podium {
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(8px, 2vw, 20px);
+  min-height: 330px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.slot {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  max-width: 280px;
+}
+
+.person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding-bottom: 10px;
+  text-align: center;
+}
+
+.name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: clamp(16px, 2.4vw, 24px);
+}
+
+.winnerName {
+  color: var(--yellow);
+  font-family: var(--font-title);
+  font-size: clamp(16px, 3.4vw, 32px);
+  font-size: round(down, clamp(16px, 3.4vw, 32px), 8px);
+  text-shadow: 4px 4px 0 var(--black);
+}
+
+.score {
+  color: var(--green);
+  font-family: var(--font-title);
+  font-size: 16px;
+  text-shadow: 3px 3px 0 var(--black);
+  font-variant-numeric: tabular-nums;
+}
+
+.block {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  overflow: hidden;
+  border: var(--border) solid var(--black);
+  box-shadow: var(--shadow-hard);
+}
+
+.place {
+  padding-top: 12px;
+  color: var(--bg);
+  font-family: var(--font-title);
+  font-size: clamp(24px, 5vw, 48px);
+  font-size: round(down, clamp(24px, 5vw, 48px), 8px);
+  text-shadow: 3px 3px 0 rgb(0 0 0 / 0.35);
+}
+
+.rest {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(100%, 520px);
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.rest li {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--bg);
+  border: var(--border) solid var(--black);
+  font-weight: 700;
+}
+
+.rest .mine {
+  border-color: var(--yellow);
+}
+
+.restPos {
+  color: var(--magenta);
+  font-family: var(--font-title);
+  font-size: 16px;
+}
+
+.restScore {
+  color: var(--yellow);
+  font-family: var(--font-title);
+  font-size: 16px;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 16px;
+}

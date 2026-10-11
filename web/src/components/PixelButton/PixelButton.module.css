@@ -1,0 +1,115 @@
+.button {
+  --btn-bg: var(--magenta);
+  --btn-ink: var(--ink);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 16px 24px;
+  border: var(--border) solid var(--black);
+  border-radius: 0;
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  font-family: var(--font-title);
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-shadow: 2px 2px 0 rgb(0 0 0 / 0.45);
+  box-shadow: var(--shadow-hard);
+  transition:
+    transform var(--dur-micro) var(--ease-snap),
+    box-shadow var(--dur-micro) var(--ease-snap),
+    background-color var(--dur-micro) linear;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 6px 8px 0 var(--black);
+}
+
+.button:active:not(:disabled) {
+  transform: translate(6px, 6px);
+  box-shadow: 0 0 0 var(--black);
+  transition-duration: 40ms;
+}
+
+/* Brillo de píxel arriba a la izquierda: da volumen sin degradados. */
+.button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgb(255 255 255 / 0.35);
+  pointer-events: none;
+}
+
+.sm {
+  min-height: 40px;
+  padding: 8px 14px;
+  font-size: 16px;
+}
+
+.lg {
+  min-height: 72px;
+  padding: 20px 16px;
+  font-size: 24px;
+}
+
+.block {
+  display: flex;
+  width: 100%;
+}
+
+.magenta {
+  --btn-bg: var(--magenta);
+}
+
+.cyan {
+  --btn-bg: var(--cyan);
+  --btn-ink: var(--bg);
+  text-shadow: none;
+}
+
+.yellow {
+  --btn-bg: var(--yellow);
+  --btn-ink: var(--bg);
+  text-shadow: none;
+}
+
+.violet {
+  --btn-bg: var(--violet);
+}
+
+.green {
+  --btn-bg: var(--green);
+  --btn-ink: var(--bg);
+  text-shadow: none;
+}
+
+.red {
+  --btn-bg: var(--red);
+}
+
+.ghost {
+  --btn-bg: var(--bg-2);
+  --btn-ink: var(--ink);
+}
+
+.button:disabled {
+  --btn-bg: var(--bg-3);
+  --btn-ink: var(--ink-dim);
+  text-shadow: none;
+  box-shadow: var(--shadow-hard-sm);
+  border-style: dashed;
+  border-color: var(--ink-dim);
+}
+
+.button:disabled::before {
+  display: none;
+}

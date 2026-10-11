@@ -1,0 +1,25 @@
+.banner {
+  position: fixed;
+  left: 50%;
+  bottom: 12px;
+  z-index: var(--z-overlay);
+  padding: 10px 14px;
+  background: var(--black);
+  color: var(--yellow);
+  border: var(--border) solid var(--yellow);
+  font-family: var(--font-title);
+  font-size: 16px;
+  transform: translateX(-50%);
+  animation: blink 1.2s steps(1) infinite;
+}
+
+@keyframes blink {
+  0%,
+  69% {
+    opacity: 1;
+  }
+  70%,
+  99% {
+    opacity: 0.35;
+  }
+}

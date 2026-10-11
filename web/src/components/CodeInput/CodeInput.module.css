@@ -1,0 +1,33 @@
+.row {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(4px, 1.4vw, 10px);
+}
+
+.cell {
+  width: 100%;
+  min-width: 0;
+  height: clamp(56px, 12vw, 80px);
+  padding: 0;
+  background: var(--black);
+  color: var(--yellow);
+  border: var(--border) solid var(--violet);
+  border-radius: 0;
+  font-family: var(--font-title);
+  font-size: clamp(16px, 4.4vw, 32px);
+  font-size: round(down, clamp(16px, 4.4vw, 32px), 8px);
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow: 3px 3px 0 var(--magenta);
+  caret-color: transparent;
+}
+
+.cell:focus {
+  outline: none;
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 4px var(--black), 4px 4px 0 4px var(--cyan);
+}
+
+.invalid .cell {
+  border-color: var(--red);
+}

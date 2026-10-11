@@ -1,0 +1,82 @@
+.page {
+  position: relative;
+  z-index: var(--z-content);
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 40px 16px;
+}
+
+.wrap {
+  width: min(100%, 560px);
+  padding-top: 20px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.categories {
+  margin: 0;
+  padding: 0;
+  border: none;
+  min-width: 0;
+}
+
+.legend {
+  padding: 0;
+  margin-bottom: 10px;
+  color: var(--yellow);
+  font-family: var(--font-title);
+  font-size: 8px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  padding: 8px 10px;
+  background: var(--bg);
+  color: var(--ink-dim);
+  border: 3px solid var(--black);
+  border-radius: 0;
+  box-shadow: 3px 3px 0 var(--black);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 14px;
+  transition: transform var(--dur-micro) var(--ease-snap);
+}
+
+.chip:hover {
+  transform: translateY(-2px);
+}
+
+.on {
+  background: var(--cyan);
+  color: var(--bg);
+}
+
+.hint {
+  color: var(--ink-dim);
+  font-size: 14px;
+}
+
+.error {
+  min-height: 1.4em;
+  color: var(--red);
+  font-weight: 700;
+}
+
+.actions {
+  display: grid;
+  gap: 16px;
+  padding-bottom: 6px;
+}
