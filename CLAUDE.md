@@ -1,6 +1,6 @@
 # Trivia Castro — Contexto del proyecto
 
-> Archivo de contexto inicial. Resume lo definido en la Etapa 1 (definición de la API y diagramas de flujo) y la Etapa 2 (documentación de la API y pantallas). **Estado (oct 2026): el frontend `web/` está completo contra un mock; `api/` está por construir** (ver sección 12). Equipo de 2 personas que trabajan en paralelo y luego integran.
+> Archivo de contexto inicial. Resume lo definido en la Etapa 1 (definición de la API y diagramas de flujo) y la Etapa 2 (documentación de la API y pantallas). **Estado (12 oct 2026): el frontend `web/` está completo contra un mock y la API `api/` está implementada y probada; falta registrar la integración real entre ambos** (ver sección 12). Equipo de 2 personas que trabajan en paralelo y luego integran.
 
 **Equipo:** "Cristian Castro" es el nombre del equipo (aparece en los encabezados de los documentos). Los integrantes son 2: Adler Antonio Calvillo Arellano y Jared López García.
 
@@ -46,12 +46,12 @@ Jugador -> WEBSITE -> TRIVIA CASTRO API -> BASE DE DATOS
 
 ## 3.1 Stack tecnológico
 
-- **API:** Python con **FastAPI** (OpenAPI/Swagger automático, validación con Pydantic), SQLAlchemy + Alembic (ORM y migraciones).
-- **Base de datos:** **MySQL** (índice único `(roundId, participantId)`).
-- **Website:** **React** (sugerido: Vite + TanStack Query con `refetchInterval` para el polling).
-- **Scheduler:** tarea asíncrona dentro de la API o APScheduler. Correr **un solo proceso** del servidor para evitar dos relojes sobre la misma partida.
-- **Pruebas:** pytest (puntuación y transiciones de fase).
-- **Entorno:** `docker-compose` con MySQL para que ambos integrantes compartan el mismo entorno.
+- **API:** Python con **FastAPI** (OpenAPI/Swagger automático en `/docs`, validación con Pydantic), SQLAlchemy 2 **síncrono** + Alembic (ORM y migraciones). Corre en el puerto **8000**.
+- **Base de datos:** **MySQL 8.4** (índice único `(roundId, participantId)` en las respuestas). Contenedor `trivia-castro`, base `trivia_castro`, publicada solo en `127.0.0.1:3307`.
+- **Website:** **React** (Vite + TanStack Query con `refetchInterval` para el polling). Vite reenvía `/api` a `http://localhost:8000`.
+- **Fases (sin scheduler):** se evalúan **por petición** (`games.tick`), con la hora programada de cada transición. Un candado global (`GAME_LOCK`) serializa las peticiones; correr **un solo proceso** (`uvicorn` sin `--workers`) para evitar dos relojes sobre la misma partida.
+- **Pruebas:** pytest (25 pruebas: puntuación, salas, partida completa, poderes, formas contra el contrato), con SQLite en memoria y reloj falso; vitest en el Website.
+- **Entorno:** `docker-compose` con MySQL para que ambos integrantes compartan el mismo entorno; `.env` fuera de git (ver `.env.example`).
 
 ## 4. Decisiones tomadas
 
@@ -75,14 +75,15 @@ Jugador -> WEBSITE -> TRIVIA CASTRO API -> BASE DE DATOS
 | Entidad | Campos / notas |
 |---|---|
 | Player | nickname, token |
-| Room | code, host, settings |
+| Room | code, host, settings, status (`WAITING`/`IN_GAME`/`FINISHED`); `currentGameId` se calcula con la última partida |
 | Participant | score, lives, status (separa "quién eres" de "cómo te va en esta sala") |
 | Game | phase, version (version = ETag) |
-| Round | number, type, endsAt |
+| Round | number, type, orden barajado de las opciones, ranking al cerrarse |
 | Question / Option | difficulty, isCorrect |
 | SubmittedAnswer | único por ronda |
 | ParticipantPower | inventario, usedAt |
-| PowerUse | quién, cuándo, a quién |
+| PowerUse | quién, cuándo, ronda, opciones quitadas (HINT) |
+| RoundOutcome | una fila por participante y ronda (`lastResult`): fuente de resultados, estadísticas y `positionDelta` |
 | Category | las 10 categorías |
 
 Relaciones principales:
@@ -91,8 +92,11 @@ Relaciones principales:
 Room 1--< Participant
 Room 1--< Game 1--< Round >-- Question 1--< Option
 Round 1--< SubmittedAnswer >--1 Participant
+Round 1--< RoundOutcome >--1 Participant
 Participant 1--< ParticipantPower
 ```
+
+Los ids viajan como cadenas con prefijo y el entero de la BD (`p1`, `pt2`, `g3`, `q4`, `o5`, `c6`); el contrato los trata como opacos.
 
 **Índice único `(roundId, participantId)`** en `SubmittedAnswer`: impide responder dos veces. Se garantiza **en la base de datos**, no en la aplicación.
 
@@ -102,13 +106,13 @@ Participant 1--< ParticipantPower
 ROUND_INTRO (3s) -> QUESTION (20s) -> REVEAL (4s) -> SCOREBOARD (6s) -> [loop mientras queden rondas] -> FINAL
 ```
 
-- Avanza un **scheduler del servidor** por temporizador. El host puede adelantar (`POST /games/{id}/advance`), pero el juego nunca depende de que un cliente lo pida.
+- Las transiciones las aplica el **servidor** al vencer cada fase (evaluadas de forma perezosa en cada petición, con la hora programada de la fase, no la de la petición). El host puede adelantar (`POST /games/{id}/advance`), pero el juego nunca depende de que un cliente lo pida.
 - El cliente solo lee el campo `phase` y decide qué pantalla dibujar. Toda la lógica de transición es del servidor.
 - ROUND_INTRO anuncia el tipo de ronda; en QUESTION se responde y se usan poderes; REVEAL muestra correcta, puntos y vidas.
 
 ## 7. Superficie de la API
 
-Todas las rutas bajo `/api/v1`. **Bearer obligatorio salvo `POST /players` y `GET /rooms/{code}`.**
+Todas las rutas bajo `/api/v1`. **Bearer obligatorio salvo `POST /players` y `GET /rooms/{code}`.** El contrato define 18 endpoints; la API implementa 17 (falta `POST /questions/import`, opcional).
 
 **Sesión y salas**
 - `POST /players`
@@ -140,10 +144,10 @@ Todas las rutas bajo `/api/v1`. **Bearer obligatorio salvo `POST /players` y `GE
 {
   "version": 43,
   "phase": "QUESTION",
-  "serverTime": "2026-09-04T18:30:06Z",
+  "serverTime": "2026-09-04T18:30:06.250Z",
   "round": {
     "number": 3, "type": "DOUBLE",
-    "endsAt": "2026-09-04T18:30:26Z",
+    "endsAt": "2026-09-04T18:30:26.000Z",
     "question": { "text": "¿Año del primer PlayStation?",
                   "options": [ {"id":"o1","text":"1992"}, ... ] }
   },
@@ -164,12 +168,12 @@ Todas las rutas bajo `/api/v1`. **Bearer obligatorio salvo `POST /players` y `GE
 puntos = (base + bonus_velocidad) x mult_ronda x mult_poder
 ```
 
-- **Base:** depende de la dificultad (ej. 800).
-- **Velocidad:** según el tiempo de respuesta sobre 20 s (ej. 4.2 s -> +316).
+- **Base:** depende de la dificultad (ej. 800). Valores provisionales de la API: EASY 500 · MEDIUM 800 · HARD 1100 (`api/app/scoring.py`).
+- **Velocidad:** según el tiempo de respuesta sobre 20 s (ej. 4.2 s -> +316). Fórmula provisional de la API: `400·(20 s − t)/20 s`, redondeada.
 - **Multiplicador de ronda:** el tipo de ronda multiplica. Tipos de ronda: **NORMAL** (x1, la mayoría) y **DOUBLE** (x2, aparece de vez en cuando).
 - **Poder:** multiplicador adicional si se usó el doble.
 - Ejemplo del documento: (800 + 316) x 2 = **2232**, calculado en el servidor.
-- **Fallar:** 0 puntos y -1 vida. **El puntaje nunca baja.**
+- **Fallar o no responder (timeout):** 0 puntos y -1 vida (SHIELD la evita). **El puntaje nunca baja.**
 - **Sin vidas:** pasa a **espectador**, no se le expulsa.
 - **Poderes:** 1 doble, 1 escudo, 1 pista. Se usan **antes de responder**.
 
@@ -207,17 +211,23 @@ puntos = (base + bonus_velocidad) x mult_ronda x mult_poder
 
 ## 12. Estado actual y puntos abiertos
 
-- **Etapa 1:** completada (definición de API y diagramas).
-- **Etapa 2:** en curso (documentación de la API y pantallas según el diagrama de flujo).
+- **Etapa 1:** completada (definición de API y diagramas). **Etapa 2:** completada en lo esencial (documentación de la API y pantallas).
+- **Contrato v0.2:** cerrado (decisiones D1 a D12) con 10 JSON de ejemplo en `docs/contrato/ejemplos/`.
 - **Frontend (`web/`, Adler): completo contra un mock.** Home, Crear sala, Unirse, Lobby, ciclo de partida (intro, pregunta, reveal, marcador, final, espectador), estadísticas, pantallas de error, sonido y efecto CRT. Detalle en `web/README.md` y `docs/frontend/pantallas-spec.md`.
-- **API (`api/`, Jared): por construir.** Empieza por `docs/frontend/GUIA-PARA-LA-API.md` y `api/CLAUDE.md`.
-- Equipo de 2 personas. Falta la **integración real** (el frontend nunca ha hablado con la API de verdad).
+- **API (`api/`, Jared): implementada y probada** (commit `f9cc073`, 11 oct). 17 de los 18 endpoints; modelos y migración Alembic; seed de 10 categorías y 120 preguntas; fases perezosas, puntos, vidas, poderes (HINT, SHIELD, DOUBLE), ranking con `positionDelta`, resultados y estadísticas; `scripts/play_bots.py`; 25 pruebas pytest en verde (SQLite). Estado por hito y decisiones propias: `api/PLAN-API.md`.
+- **Falta:**
+  - **Integración real** (Integración 1 y 2 del `PLAN.md`): el repo no tiene constancia de que el frontend haya jugado una partida completa contra la API real.
+  - Validar la API contra **MySQL real** (las pruebas usan SQLite).
+  - Que Adler revise las **decisiones del frente A** (`docs/frontend/PENDIENTES.md`) y añada `powerUsed` a `web/src/api/types.ts`; después se pasan al contrato (milisegundos en timestamps, `powerUsed`, `NOT_FOUND`/`INTERNAL_ERROR`, rangos de `settings`, etc.).
+  - `POST /questions/import` (opcional, A12), limpieza de salas viejas, ensayo con varios dispositivos.
 - Pendientes por definir (no están en la documentación):
-  - Fórmula exacta del bonus de velocidad (**se deja pendiente a propósito; se definirá después**; el 316 del ejemplo es solo ilustrativo). El mock del frontend usa `400·(20 s − t)/20 s` solo para desarrollar.
-  - Puntaje base de cada dificultad (niveles ya definidos: `EASY`, `MEDIUM`, `HARD`). El mock usa 500/800/1100 solo para desarrollar.
+  - Fórmula exacta del bonus de velocidad (**se deja pendiente a propósito; se definirá después**; el 316 del ejemplo es solo ilustrativo). La API y el mock usan provisionalmente `400·(20 s − t)/20 s`.
+  - Puntaje base de cada dificultad (niveles `EASY`, `MEDIUM`, `HARD`). La API y el mock usan provisionalmente 500/800/1100.
   - Pantalla "Apuesta": no está en el contrato ni en la spec del frontend; **no se construye**.
-  - Fuente de la API externa de preguntas.
-  - Huecos del contrato detectados por el frontend (formato de `X-Server-Time`, timeout, escudo absorbido, revancha, desempate, rangos de ajustes): ver `docs/frontend/PENDIENTES.md`.- Ya resuelto en el contrato compartido (`docs/contrato/README.md`, decisiones D1 a D12): efecto de los poderes (HINT quita 2 opciones incorrectas, SHIELD evita perder la vida al fallar, DOUBLE multiplica x2 los puntos; combinado con ronda DOUBLE da x4) y límites por defecto de sala (8 jugadores, 10 rondas, 3 vidas).
+  - Revancha tras `FINAL`: no definida.
+  - Fuente de la API externa de preguntas (solo si se hace la importación).
+- Ya resuelto en el contrato compartido (`docs/contrato/README.md`, decisiones D1 a D12): efecto de los poderes (HINT quita 2 opciones incorrectas, SHIELD evita perder la vida al fallar, DOUBLE multiplica x2 los puntos; combinado con ronda DOUBLE da x4) y límites por defecto de sala (8 jugadores, 10 rondas, 3 vidas).
+- **Entregable final:** además del juego, un **documento final del proyecto con el manual de la API** (aún no escrito; la base es `docs/contrato/`).
 
 ## 13. Siguiente paso
 
@@ -227,7 +237,7 @@ El plan de trabajo en paralelo está en **`PLAN.md`**: dos frentes (A: API y dat
 - **Restricción:** el stack debe ser gratuito (lo es; el hosting en línea es opcional, se puede exponer en local).
 - **Responsables:** Jared lleva el frente A (API y datos) y Adler el frente B (Website). Ver `PLAN.md`, sección 7.
 - **Contrato compartido:** `docs/contrato/` (README, endpoints y `ejemplos/` con los JSON). Decisiones D1 a D12 confirmadas. Es la fuente de verdad para ambos frentes.
-- **Siguiente paso real:** Jared construye `api/` (primero los stubs de A2) y se hace la **Integración 1 y 2** del `PLAN.md`. Guía: `docs/frontend/GUIA-PARA-LA-API.md`.
+- **Siguiente paso real:** conectar `web/` con `api/` (`VITE_USE_MOCK=false`), hacer la **Integración 1** (crear/unirse/lobby) y la **Integración 2** (partida completa, también con `scripts/play_bots.py`), corregir lo que salga y pasar al contrato las decisiones del frente A aceptadas. Después, el manual de la API y el ensayo de la exposición.
 
 ## 14. Estructura del repositorio
 

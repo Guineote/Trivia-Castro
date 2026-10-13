@@ -1,6 +1,7 @@
 # Trivia Castro — Plan de trabajo en paralelo
 
 > Complementa a `CLAUDE.md` (contexto y decisiones). **Entrega: la próxima semana** (día exacto por confirmar). El plan está pensado en 7 días corridos; si la fecha es antes, se recorta según la prioridad (sección 5).
+> **Estado (12 oct):** los frentes A (A1–A11) y B están construidos; falta la integración real, validar en MySQL y el pulido. Ver sección 8 y `api/PLAN-API.md`.
 > **Responsables:** Jared lleva el frente A (API y datos) y Adler el frente B (Website). El bloque C (contrato compartido) es de ambos y ya está confirmado (`docs/contrato/`). Ver sección 7.
 
 ## 1. Cómo se divide
@@ -76,7 +77,21 @@ La clave para no bloquearse: **la API arranca con stubs** (rutas que devuelven J
 - Frente B (Website): **Adler**
 - Bloque C (contrato compartido): ambos. Decisiones D1 a D12 confirmadas en `docs/contrato/README.md`.
 
-## 8. Pendientes de definición que pueden afectar el plan
+## 8. Estado por tarea (12 oct 2026)
+
+| Tarea | Estado |
+|---|---|
+| C (contrato) | ✅ v0.2, D1–D12 confirmadas |
+| A1–A11 (API) | ✅ Implementadas. A2 (stubs) se omitió: se hizo la lógica real. 25 pruebas pytest en verde (SQLite) |
+| A12 (importar preguntas) | 🔲 No hecha (opcional) |
+| B1–B8 (Website) | ✅ Completos contra el mock; la pantalla 14 Apuesta no se construye |
+| Integración 1 (crear/unirse/lobby) | 🔲 Sin constancia en el repo |
+| Integración 2 (partida completa) | 🔲 Sin constancia en el repo |
+| Validar en MySQL real | 🔲 Pendiente |
+| Manual de la API (entregable) | 🔲 Pendiente |
+| Ensayo de la exposición | 🔲 Pendiente |
+
+## 9. Pendientes de definición que pueden afectar el plan
 
 - Fórmula del bonus de velocidad (se aísla en una función para cambiarla sin tocar lo demás).
 - Puntaje base de cada dificultad (los niveles `EASY`, `MEDIUM`, `HARD` ya están definidos).

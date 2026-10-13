@@ -14,7 +14,7 @@ py -3.12 -m venv .venv
 .venv\Scripts\python -m uvicorn app.main:app --port 8000   # SIN --workers: un solo proceso
 ```
 
-Documentación interactiva: <http://localhost:8000/docs>. La API lee `../.env` (`MYSQL_*`); ver `.env.example` para `DB_HOST`, `DB_PORT` y `MIN_PLAYERS_TO_START`.
+Documentación interactiva: <http://localhost:8000/docs>. Estado, decisiones y pendientes: [`PLAN-API.md`](PLAN-API.md). La API lee `../.env` (`MYSQL_*`); ver `.env.example` para `DB_HOST`, `DB_PORT` y `MIN_PLAYERS_TO_START`.
 Al arrancar, si no hay preguntas, el seed corre solo.
 
 ## Pruebas
@@ -23,7 +23,7 @@ Al arrancar, si no hay preguntas, el seed corre solo.
 .venv\Scripts\python -m pytest -q
 ```
 
-Usan SQLite en memoria y un reloj falso (`app/clock.py`), así que no tocan MySQL. Incluyen pruebas de **forma** contra `docs/contrato/ejemplos/`.
+25 pruebas (puntuación, salas, partida completa, poderes, timeout, espectador, ETag/304, índice único). Usan SQLite en memoria y un reloj falso (`app/clock.py`), así que **no tocan MySQL**: para validar contra el contenedor usa `scripts/play_bots.py`. Incluyen pruebas de **forma** contra `docs/contrato/ejemplos/`.
 
 ## Jugar sin más personas
 
@@ -49,7 +49,11 @@ tests/
 
 ## Cómo funciona el tiempo
 
-No hay scheduler. En cada petición que toca una partida (`state`, `answers`, `powers`, `GET /rooms/{code}`…) se aplican, **en orden y con su hora programada**, todas las transiciones cuyo `phase_end_ms` ya pasó (`games.tick`). Un candado (`GAME_LOCK`) serializa las peticiones, así que con un solo proceso nunca hay dos relojes sobre la misma partida. `version` sube con cada cambio visible y es la base del ETag.
+No hay scheduler. En cada petición que toca una partida (`state`, `answers`, `powers`, `GET /rooms/{code}`…) se aplican, **en orden y con su hora programada**, todas las transiciones cuyo `phase_end_ms` ya pasó (`games.tick`). Un candado global (`GAME_LOCK`, en `app/db.py`) serializa las peticiones, así que con un solo proceso nunca hay dos relojes sobre la misma partida. `version` sube con cada cambio visible y es la base del ETag.
+
+## Endpoints
+
+17 de los 18 del contrato (`docs/contrato/endpoints.md`). **No existe** `POST /questions/import` (opcional). No hay `/health`: usa `/docs`.
 
 ## Decisiones propias del frente A
 

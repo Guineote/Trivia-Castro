@@ -37,7 +37,7 @@ cp .env.example .env.local          # bash
 | `VITE_USE_MOCK` | Comportamiento |
 |---|---|
 | `true` | El cliente usa un servidor falso en el navegador. No hace falta API ni base de datos. |
-| vacío / `false` | El cliente llama a `/api/v1/...`. Vite lo reenvía a `http://localhost:8000` (`server.proxy` en `vite.config.ts`; **puerto por confirmar con Jared**). |
+| vacío / `false` | El cliente llama a `/api/v1/...`. Vite lo reenvía a `http://localhost:8000` (`server.proxy` en `vite.config.ts`; puerto 8000 confirmado). |
 
 Al cambiar `.env.local` hay que reiniciar `npm run dev`. Para un `build` de producción borra `.env.local` (si no, el mock entra en el bundle).
 
@@ -105,14 +105,14 @@ Principios que el código respeta (del `CLAUDE.md` raíz):
 
 ## Qué necesita el frontend de la API real
 
-Resumen para quien lleva `api/`. **Guía completa:** [`docs/frontend/GUIA-PARA-LA-API.md`](../docs/frontend/GUIA-PARA-LA-API.md). El estado de cada duda está en [`docs/frontend/PENDIENTES.md`](../docs/frontend/PENDIENTES.md).
+Resumen para quien lleva `api/`. **Estado 12 oct:** la API ya implementa todo lo de la lista (ver `api/PLAN-API.md`); falta confirmarlo jugando una partida real con `VITE_USE_MOCK=false`. **Guía completa:** [`docs/frontend/GUIA-PARA-LA-API.md`](../docs/frontend/GUIA-PARA-LA-API.md). El estado de cada duda está en [`docs/frontend/PENDIENTES.md`](../docs/frontend/PENDIENTES.md).
 
-- [ ] Todas las respuestas, **incluidas las 304**, con `X-Server-Time` (se asume ISO 8601; **mejor con milisegundos**).
-- [ ] `ETag` con forma `"<gameId>-v<version>"` y `Vary: Authorization` en `GET /games/{id}/state`.
-- [ ] Errores con el formato `{ "error": { "code", "message" } }` (manejador propio en FastAPI, incluida la validación de Pydantic).
-- [ ] Confirmar el puerto (se asume `8000`). Si el frontend no va por el proxy de Vite, CORS debe permitir `Authorization` e `If-None-Match` y exponer `ETag` y `X-Server-Time`.
-- [ ] Decidir y documentar: qué trae `lastResult` en un timeout, cómo saber si el SHIELD absorbió la vida, forma de `activePower`.
-- [ ] Rangos permitidos de `settings` (jugadores, rondas, vidas).
+- [x] Todas las respuestas, **incluidas las 304**, con `X-Server-Time` (se asume ISO 8601; **mejor con milisegundos**).
+- [x] `ETag` con forma `"<gameId>-v<version>"` y `Vary: Authorization` en `GET /games/{id}/state`.
+- [x] Errores con el formato `{ "error": { "code", "message" } }` (manejador propio en FastAPI, incluida la validación de Pydantic).
+- [x] Puerto `8000` confirmado. Si el frontend no va por el proxy de Vite, CORS debe permitir `Authorization` e `If-None-Match` y exponer `ETag` y `X-Server-Time`.
+- [~] Decidido en la API (timeout = −1 vida con `null`s; `powerUsed` en `lastResult`; `activePower` es `PowerType | null`); pendiente de aceptar y de añadir `powerUsed` a `src/api/types.ts`.
+- [~] Rangos de `settings` implementados: jugadores 2–12 · rondas 1–15 · vidas 1–5 (pendiente de aceptar).
 
 Si la API real difiere del contrato, se arregla el tipo en `src/api/types.ts` y se avisa al otro integrante; el contrato se actualiza **antes** de tocar código.
 
