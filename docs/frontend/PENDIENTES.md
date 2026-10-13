@@ -56,7 +56,7 @@ Siguen abiertos:
 - [ ] Revancha tras FINAL.
 - [ ] Fórmula de bonus por velocidad y base por dificultad (definitivas; hoy provisionales en `api/app/scoring.py`).
 - [ ] Fecha límite de entrega (la semana del 12 al 16 de oct; día exacto por confirmar).
-- [ ] Integración real: registrar el resultado de las Integraciones 1 y 2.
+- [x] Integración real: probada a mano el 12 oct (API + Website con `VITE_USE_MOCK=false`, partida completa, todos los poderes; Adler lo vio).
 
 ## Huecos del contrato detectados al construir el cliente (sesión 1)
 > Estado 12 oct: la API ya implementa una respuesta para los cuatro primeros (milisegundos, `powerUsed`, timeout con −1 vida, y sigue sin existir `GET /players/me`). Falta que Adler las acepte y se pasen al contrato.

@@ -136,7 +136,7 @@ Todas las rutas bajo `/api/v1`. **Bearer obligatorio salvo `POST /players` y `GE
 - `GET /categories`
 - `GET /questions`
 - `POST /questions`
-- `POST /questions/import` (normaliza y deduplica por `externalId`; nunca durante una partida)
+- `POST /questions/import` (normaliza y deduplica por `externalId`; nunca durante una partida) — **descartado**: no se implementa
 
 ### Recurso central: `GET /games/{id}/state`
 
@@ -216,10 +216,9 @@ puntos = (base + bonus_velocidad) x mult_ronda x mult_poder
 - **Frontend (`web/`, Adler): completo contra un mock.** Home, Crear sala, Unirse, Lobby, ciclo de partida (intro, pregunta, reveal, marcador, final, espectador), estadísticas, pantallas de error, sonido y efecto CRT. Detalle en `web/README.md` y `docs/frontend/pantallas-spec.md`.
 - **API (`api/`, Jared): implementada y probada** (commit `f9cc073`, 11 oct). 17 de los 18 endpoints; modelos y migración Alembic; seed de 10 categorías y 120 preguntas; fases perezosas, puntos, vidas, poderes (HINT, SHIELD, DOUBLE), ranking con `positionDelta`, resultados y estadísticas; `scripts/play_bots.py`; 25 pruebas pytest en verde (SQLite). Estado por hito y decisiones propias: `api/PLAN-API.md`.
 - **Falta:**
-  - **Integración real** (Integración 1 y 2 del `PLAN.md`): el repo no tiene constancia de que el frontend haya jugado una partida completa contra la API real.
-  - Validar la API contra **MySQL real** (las pruebas usan SQLite).
+  - Ensayo con **varios dispositivos** en red: la Integración 1 y 2 ya se probó a mano el 12 oct en una sola computadora (Website con `VITE_USE_MOCK=false` contra la API en MySQL, pestaña normal + incógnito + `play_bots.py`, todos los poderes funcionando, Adler lo vio).
   - Que Adler revise las **decisiones del frente A** (`docs/frontend/PENDIENTES.md`) y añada `powerUsed` a `web/src/api/types.ts`; después se pasan al contrato (milisegundos en timestamps, `powerUsed`, `NOT_FOUND`/`INTERNAL_ERROR`, rangos de `settings`, etc.).
-  - `POST /questions/import` (opcional, A12), limpieza de salas viejas, ensayo con varios dispositivos.
+  - Limpieza de salas viejas. `POST /questions/import` (A12) **se descarta**: se usa el seed de 120 preguntas.
 - Pendientes por definir (no están en la documentación):
   - Fórmula exacta del bonus de velocidad (**se deja pendiente a propósito; se definirá después**; el 316 del ejemplo es solo ilustrativo). La API y el mock usan provisionalmente `400·(20 s − t)/20 s`.
   - Puntaje base de cada dificultad (niveles `EASY`, `MEDIUM`, `HARD`). La API y el mock usan provisionalmente 500/800/1100.
@@ -237,7 +236,7 @@ El plan de trabajo en paralelo está en **`PLAN.md`**: dos frentes (A: API y dat
 - **Restricción:** el stack debe ser gratuito (lo es; el hosting en línea es opcional, se puede exponer en local).
 - **Responsables:** Jared lleva el frente A (API y datos) y Adler el frente B (Website). Ver `PLAN.md`, sección 7.
 - **Contrato compartido:** `docs/contrato/` (README, endpoints y `ejemplos/` con los JSON). Decisiones D1 a D12 confirmadas. Es la fuente de verdad para ambos frentes.
-- **Siguiente paso real:** conectar `web/` con `api/` (`VITE_USE_MOCK=false`), hacer la **Integración 1** (crear/unirse/lobby) y la **Integración 2** (partida completa, también con `scripts/play_bots.py`), corregir lo que salga y pasar al contrato las decisiones del frente A aceptadas. Después, el manual de la API y el ensayo de la exposición.
+- **Siguiente paso real:** que Adler acepte las decisiones del frente A y se pasen al contrato; escribir el manual de la API; ensayar la exposición con varios dispositivos.
 
 ## 14. Estructura del repositorio
 

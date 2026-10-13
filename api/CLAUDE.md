@@ -8,7 +8,7 @@
 - Proyecto escolar de la Universidad Panamericana Aguascalientes. Equipo de 2. Sin microservicios, sin sobreingeniería.
 
 ## Estado (12 oct 2026)
-La API **está implementada y probada** (25 pruebas pytest en verde, sobre SQLite): 17 de los 18 endpoints del contrato (falta solo `POST /questions/import`, opcional), seed de 120 preguntas, fases perezosas, puntos, poderes, ranking, estadísticas y `scripts/play_bots.py`. Detalle por hito en [`PLAN-API.md`](PLAN-API.md); cómo correrla en [`README.md`](README.md). Pendiente: validar con MySQL real y registrar las Integraciones 1 y 2 con Adler.
+La API **está implementada y probada** (25 pruebas pytest en verde, sobre SQLite): 17 de los 18 endpoints del contrato (falta solo `POST /questions/import`, descartado), seed de 120 preguntas, fases perezosas, puntos, poderes, ranking, estadísticas y `scripts/play_bots.py`. Detalle por hito en [`PLAN-API.md`](PLAN-API.md); cómo correrla en [`README.md`](README.md). La Integración 1 y 2 con el Website y MySQL se probó a mano el 12 oct (pestaña normal + incógnito + bots, todos los poderes).
 
 ## Fuente de verdad
 1. `docs/contrato/` (README, `endpoints.md`, `ejemplos/*.json`) **manda siempre**. Los JSON de ejemplo son el formato final: se usan como mocks y como esquema de pruebas.
@@ -44,7 +44,7 @@ FastAPI · SQLAlchemy 2 **síncrono** + Alembic · MySQL 8.4 (`docker-compose.ym
 `web/src/mock/simulator.ts` implementa todas las reglas en TypeScript (fases, puntos, vidas, poderes, ranking, estadísticas) con pruebas en `web/src/test/simulator.test.ts`. No lo copies a ciegas: **lo marcado `SUPUESTO DE MOCK` no es una regla del juego** (puntos base, fórmula de velocidad, timeout, rangos…). Son decisiones de Jared, listadas en la sección 5 de `docs/frontend/GUIA-PARA-LA-API.md`.
 
 ## Siguientes pasos
-A1–A11 están hechas (los stubs de A2 se omitieron: se implementó la lógica real). Quedan: **(1)** correr una partida completa contra MySQL con `scripts/play_bots.py`; **(2)** Integración 1 y 2 con Adler, tras acordar con él los campos extra (`powerUsed`, milisegundos, `NOT_FOUND`/`INTERNAL_ERROR`; ver `PLAN-API.md` §3); **(3)** pasar al contrato las decisiones aceptadas; **(4)** pulido (limpieza de salas, ensayo) y, si sobra tiempo, A12 `POST /questions/import`. Detalle en `PLAN-API.md` y `PLAN.md`.
+A1–A11 están hechas (los stubs de A2 se omitieron: se implementó la lógica real). Quedan: **(1)** acordar con Adler los campos extra (`powerUsed`, milisegundos, `NOT_FOUND`/`INTERNAL_ERROR`; ver `PLAN-API.md` §3) y pasarlos al contrato; **(2)** el manual de la API; **(3)** pulido (limpieza de salas) y ensayo con varios dispositivos. A12 `POST /questions/import` está descartado. Detalle en `PLAN-API.md` y `PLAN.md`.
 
 ## Pruebas
 - pytest: puntuación, transiciones de fase, respuesta duplicada, vidas.

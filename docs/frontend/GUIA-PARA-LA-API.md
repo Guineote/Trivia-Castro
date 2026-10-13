@@ -9,7 +9,7 @@ Documento para **Jared**. Explica qué hay hecho en `web/`, qué espera exactame
 | Contrato (`docs/contrato/`) | v0.2 cerrado, decisiones D1–D12 confirmadas |
 | Frontend (`web/`) | Completo contra un **mock**: Home, Crear sala, Unirse, Lobby, ciclo de partida (intro, pregunta, reveal, marcador, final, espectador), estadísticas, errores, sonido |
 | API (`api/`) | **Implementada y probada** (12 oct): 17 de 18 endpoints, 120 preguntas, 25 pruebas pytest. Ver [`api/PLAN-API.md`](../../api/PLAN-API.md) |
-| Integración real | Pendiente de registrar: el repo no tiene constancia de una partida completa del frontend contra la API real |
+| Integración real | Probada a mano el 12 oct: Website con `VITE_USE_MOCK=false` contra la API en MySQL, partida completa y todos los poderes |
 
 Lo importante: **no estás bloqueado por el frontend ni al revés**. El frontend ya funciona contra el mock; en cuanto tu API cumpla el contrato, se cambia una variable de entorno y se prueban juntos.
 
@@ -227,7 +227,7 @@ app.add_middleware(
 
 ## 10. Lista rápida de verificación (para marcar)
 
-> Estado 12 oct: la API cumple los puntos marcados (verificado con pruebas, sobre SQLite). Falta confirmarlos de punta a punta con el frontend y MySQL real, y sigue abierta la casilla de las decisiones en el contrato.
+> Estado 12 oct: la API cumple los puntos marcados (pruebas automáticas y prueba manual con el frontend y MySQL el 12 oct). Sigue abierta la casilla de las decisiones en el contrato.
 
 - [x] `X-Server-Time` en todas las respuestas, también 304 y errores.
 - [x] `ETag` `"<gameId>-v<version>"` + `Vary: Authorization` en `GET /state`; 304 sin cuerpo.
