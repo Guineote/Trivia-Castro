@@ -59,4 +59,4 @@ docker compose up -d
 
 - Contrato compartido v0.2 (decisiones D1–D12 confirmadas).
 - Frontend: Home, Crear sala, Unirse, Lobby, el ciclo completo de partida (intro, pregunta, reveal, marcador, final, espectador), estadísticas y resultados detallados, pantallas de error, sonido y efecto CRT, todo funcionando contra el mock. Falta la revancha (pendiente con Jared).
-- API: implementada y probada (17 de 18 endpoints, 120 preguntas, 25 pruebas en verde); detalle en [`api/PLAN-API.md`](api/PLAN-API.md). Falta registrar la integración con el frontend y validarla contra MySQL real (ver "Qué necesita el frontend de la API real" en [`web/README.md`](web/README.md#qué-necesita-el-frontend-de-la-api-real)).
+- API: implementada y probada (17 de 18 endpoints, 120 preguntas, 25 pruebas en verde); detalle en [`api/PLAN-API.md`](api/PLAN-API.md). Integración con el frontend probada a mano el 12 oct, con MySQL (ver "Qué necesita el frontend de la API real" en [`web/README.md`](web/README.md#qué-necesita-el-frontend-de-la-api-real)).

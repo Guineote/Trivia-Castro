@@ -23,7 +23,7 @@ Al arrancar, si no hay preguntas, el seed corre solo.
 .venv\Scripts\python -m pytest -q
 ```
 
-25 pruebas (puntuación, salas, partida completa, poderes, timeout, espectador, ETag/304, índice único). Usan SQLite en memoria y un reloj falso (`app/clock.py`), así que **no tocan MySQL**: para validar contra el contenedor usa `scripts/play_bots.py`. Incluyen pruebas de **forma** contra `docs/contrato/ejemplos/`.
+25 pruebas (puntuación, salas, partida completa, poderes, timeout, espectador, ETag/304, índice único). Usan SQLite en memoria y un reloj falso (`app/clock.py`), así que **no tocan MySQL**: para ejercitar el contenedor juega con el Website o usa `scripts/play_bots.py`. Incluyen pruebas de **forma** contra `docs/contrato/ejemplos/`.
 
 ## Jugar sin más personas
 
@@ -53,7 +53,7 @@ No hay scheduler. En cada petición que toca una partida (`state`, `answers`, `p
 
 ## Endpoints
 
-17 de los 18 del contrato (`docs/contrato/endpoints.md`). **No existe** `POST /questions/import` (opcional). No hay `/health`: usa `/docs`.
+17 de los 18 del contrato (`docs/contrato/endpoints.md`). **No existe** `POST /questions/import` (descartado: se usa el seed). No hay `/health`: usa `/docs`.
 
 ## Decisiones propias del frente A
 

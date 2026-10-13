@@ -105,7 +105,7 @@ Principios que el código respeta (del `CLAUDE.md` raíz):
 
 ## Qué necesita el frontend de la API real
 
-Resumen para quien lleva `api/`. **Estado 12 oct:** la API ya implementa todo lo de la lista (ver `api/PLAN-API.md`); falta confirmarlo jugando una partida real con `VITE_USE_MOCK=false`. **Guía completa:** [`docs/frontend/GUIA-PARA-LA-API.md`](../docs/frontend/GUIA-PARA-LA-API.md). El estado de cada duda está en [`docs/frontend/PENDIENTES.md`](../docs/frontend/PENDIENTES.md).
+Resumen para quien lleva `api/`. **Estado 12 oct:** la API ya implementa todo lo de la lista (ver `api/PLAN-API.md`); se probó jugando una partida real con `VITE_USE_MOCK=false` el 12 oct. **Guía completa:** [`docs/frontend/GUIA-PARA-LA-API.md`](../docs/frontend/GUIA-PARA-LA-API.md). El estado de cada duda está en [`docs/frontend/PENDIENTES.md`](../docs/frontend/PENDIENTES.md).
 
 - [x] Todas las respuestas, **incluidas las 304**, con `X-Server-Time` (se asume ISO 8601; **mejor con milisegundos**).
 - [x] `ETag` con forma `"<gameId>-v<version>"` y `Vary: Authorization` en `GET /games/{id}/state`.

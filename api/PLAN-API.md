@@ -4,8 +4,9 @@
 
 ## 1. Dónde estamos (leído del repo)
 
-- **La API está implementada** (M0–M5 completos y la mayor parte de M6): 17 de los 18 endpoints del contrato (todos menos `POST /questions/import`), modelos y migración Alembic, seed de 10 categorías y 120 preguntas, fases perezosas, puntuación, poderes, ranking, resultados y estadísticas, `play_bots.py` y **25 pruebas pytest en verde** (revisión del 12 de oct, sobre SQLite en memoria).
-- **Falta:** `POST /questions/import` (opcional, A12), verificar la API contra MySQL real con una partida completa y registrar las integraciones con el Website (Integración 1 y 2 del `PLAN.md`; el repo no tiene constancia de que se hayan hecho), la limpieza de salas viejas y el README/manual final (ver §8 y §9).
+- **La API está implementada** (M0–M6 completos): 17 de los 18 endpoints del contrato (todos menos `POST /questions/import`), modelos y migración Alembic, seed de 10 categorías y 120 preguntas, fases perezosas, puntuación, poderes, ranking, resultados y estadísticas, `play_bots.py` y **25 pruebas pytest en verde** (revisión del 12 de oct, sobre SQLite en memoria).
+- **Integración y MySQL:** probada a mano por Jared el 12 oct: Website con `VITE_USE_MOCK=false` contra la API (en MySQL), partida completa entre una pestaña normal y una de incógnito más `play_bots.py`, todos los poderes funcionando y Adler lo vio. La API corrió contra el contenedor MySQL, así que el seed y el esquema funcionan ahí.
+- **Falta:** que Adler acepte las decisiones del §3 y se pasen al contrato, un ensayo con varios dispositivos reales, limpieza de salas viejas y el manual de la API (ver §9). `POST /questions/import` **se descarta**: el juego se queda con el seed de 120 preguntas.
 - Contrato v0.2 cerrado (D1–D12) con 10 JSON de ejemplo. Las decisiones propias del frente A (§3) **no se han llevado al contrato**: esperan la revisión de Adler.
 - El Website (Adler) está completo contra un mock. `web/src/mock/simulator.ts` sigue siendo la referencia de reglas; lo marcado `SUPUESTO DE MOCK` no es regla del juego.
 - Puertos: API en **8000** (Vite reenvía `/api` ahí) y MySQL en `127.0.0.1:3307`. Contenedor y base se llaman **`trivia-castro` / `trivia_castro`**.
@@ -107,24 +108,24 @@ Ids enteros autoincrementales, serializados con prefijo en el JSON. Los instante
 | **M3** Contenido, inicio y `state` (A5, A6) | Seed (10 × 12 = 120 preguntas), `/categories`, `/questions`, `POST /rooms/{code}/games`, `state` por fase con ETag/304 | ✅ Hecho |
 | **M4** Fases, respuestas y puntos (A7, A8) | Fases perezosas, `advance`, `answers`, cierre de ronda, espectador, `room.status = FINISHED` | ✅ Hecho |
 | **M5** Ranking, resultados y poderes (A9, A10) | `/ranking` con `positionDelta`, `/rounds/{n}/results`, `/results`, HINT / SHIELD / DOUBLE | ✅ Hecho |
-| **M6** Bots, forma e integración (A11) | `scripts/play_bots.py` y pruebas de forma contra `docs/contrato/ejemplos/` listos. **Integración 1 y 2 con Adler: sin constancia en el repo** | 🟡 Parcial |
-| **M7** Pulido | README de `api/` listo. Falta: limpieza de salas, ensayo con varios dispositivos y, si sobra tiempo, `POST /questions/import` (A12) | 🔲 Pendiente |
+| **M6** Bots, forma e integración (A11) | `scripts/play_bots.py` y pruebas de forma listos. **Integración 1 y 2:** prueba manual del 12 oct (pestaña normal + incógnito + bots, todos los poderes); Adler lo vio | ✅ Hecho |
+| **M7** Pulido | README de `api/` listo. Falta: limpieza de salas y ensayo con varios dispositivos. `POST /questions/import` (A12) descartado | 🟡 Parcial |
 
 ## 8. Pruebas
 
 - **25 pruebas pytest en verde** (`python -m pytest -q` desde `api/`): `test_scoring` (4: ejemplo del contrato (800 + 316) × 2 = 2232, bonus acotado, multiplicadores), `test_rooms` (8: headers y errores, nickname, sala con la forma del contrato, 201/200, ajustes, salir/expulsar y host, categorías y preguntas) y `test_game` (13: iniciar y errores, ETag/304, acceso, partida completa de 3 rondas, resultados antes del final, respuesta tardía, timeout con y sin SHIELD, HINT, DOUBLE de poder y de ronda, espectador, `advance`, reloj perezoso hasta FINAL, índice único en la BD).
 - **Pruebas de forma:** comparan las claves de cada respuesta real con `docs/contrato/ejemplos/*.json` (`powerUsed` se permite como campo extra de `lastResult`).
-- **Limitación:** las pruebas usan **SQLite en memoria** y un reloj falso; no ejercitan MySQL. Falta una corrida completa contra el contenedor (`play_bots.py` es la forma de hacerla).
+- **Limitación:** las pruebas automáticas usan **SQLite en memoria** y un reloj falso. MySQL se ejercitó con la prueba manual del 12 oct (API + Website + `play_bots.py`).
 - **Humo manual:** `curl.exe` (ejemplos en `docs/frontend/GUIA-PARA-LA-API.md`, §8) y `play_bots.py`.
 
 ## 9. Pendientes y riesgos
 
-- **Integración con el Website.** Registrar el resultado de la Integración 1 (Home → Crear → Unirse → Lobby) y la 2 (partida completa). `web/.env.local` está en `VITE_USE_MOCK=false` en la máquina de desarrollo, pero eso no prueba nada. Primero Adler debe añadir `powerUsed` a `web/src/api/types.ts` y aceptar los puntos de §3.
-- **Validar en MySQL real:** `alembic upgrade head`, seed y una partida con `play_bots.py` (la migración y el índice único nunca se han probado en las pruebas automáticas).
+- **Integración con el Website: hecha a mano**, en una sola computadora (dos pestañas + bots). Falta probar con dispositivos distintos en red y que Adler añada `powerUsed` a `web/src/api/types.ts` y acepte los puntos del §3.
 - **Salas sin limpieza.** Una sala solo se borra si queda vacía en `WAITING`; las partidas terminadas se acumulan en la BD (irrelevante para la demo).
 - **Candado global:** serializa todas las peticiones; aceptable con 2–12 jugadores en un solo proceso.
 - **`DELETE` de un participante que no existe** responde `404 ROOM_NOT_FOUND` (el contrato no define un código específico).
-- **`POST /questions/import`** no existe (opcional; sin fuente de API externa definida).
+- **`POST /questions/import`** no existe y **se descarta** (se usa el seed de 120 preguntas).
+- **Manual de la API** (entregable): pendiente; se puede escribir ya con las partes estables.
 - **Revancha** y **pantalla de Apuesta** no se construyen.
 - **Tiempo.** La fecha exacta de entrega (semana del 12 al 16 de octubre) sigue sin confirmarse.
 
