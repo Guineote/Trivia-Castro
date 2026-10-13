@@ -8,12 +8,12 @@ El frontend ya recorre todo el juego contra un mock (ver [`web/README.md`](../..
 2. **Errores** en formato `{ "error": { "code", "message" } }` (también los de validación de Pydantic).
 3. **Puerto y CORS:** confirmar el puerto (se asume 8000). Con el proxy de Vite no hay CORS; si no, permitir `Authorization`/`If-None-Match` y exponer `ETag`/`X-Server-Time`.
 4. **Decisiones que el mock tuvo que inventar** y que dependen de ti (detalle abajo): `lastResult` en timeout, cómo saber si el SHIELD absorbió la vida, forma de `activePower`, formato/precisión de `X-Server-Time`, rangos de `settings`, y si `pointsThisRound` sigue poblado en `SCOREBOARD`.
-5. **Seguridad del repo:** `.env` está trackeado y `docker-compose.yml` publica MySQL en todas las interfaces (primer punto de abajo).
+5. **Seguridad del repo:** resuelto (`.env` ya no está trackeado y MySQL solo escucha en `127.0.0.1`; ver «Seguridad» abajo).
 
 Los supuestos del mock están marcados como `SUPUESTO DE MOCK` en `web/src/mock/simulator.ts`: **no son reglas del juego**.
 
-## Decisiones del frente A (API implementada, 11 oct 2026) — **Adler: revisar**
-La API en `api/` toma estas decisiones donde el contrato no decía nada. **No se editó `docs/contrato/`**: si las aceptan, se pasan al contrato. Todas son cambiables en un solo lugar (`api/app/scoring.py`, `api/app/schemas.py`, `api/app/services/games.py`).
+## Decisiones del frente A (API implementada, 11 oct 2026; verificada el 12 oct con 25 pruebas en verde) — **Adler: revisar**
+La API en `api/` toma estas decisiones donde el contrato no decía nada. **No se editó `docs/contrato/`**: si las aceptan, se pasan al contrato. Estado completo en [`api/PLAN-API.md`](../../api/PLAN-API.md) §3. Todas son cambiables en un solo lugar (`api/app/scoring.py`, `api/app/schemas.py`, `api/app/services/games.py`).
 
 | Tema | Decisión | ¿Afecta a `web/`? |
 |---|---|---|
@@ -33,22 +33,34 @@ La API en `api/` toma estas decisiones donde el contrato no decía nada. **No se
 | Ids | Prefijo + entero: `p1`, `pt2`, `g3`, `q4`, `o5`, `c6` (ids de BD) | No |
 | `X-Server-Time` / CORS | En todas las respuestas (también 304 y errores); CORS permite `http://localhost:5173` y expone `ETag` y `X-Server-Time` | No |
 | Puerto / BD | API en `:8000`; MySQL en `127.0.0.1:3307` | No |
+| Mínimo de jugadores | 2 para iniciar (D4); `MIN_PLAYERS_TO_START=1` en `.env` para probar solo | No |
+| Concurrencia | Un candado global y un solo proceso; las fases se evalúan por petición | No |
 
 ## Seguridad
-- [ ] `.env` está **trackeado** en el repo público (subido por web). Arreglar: `git rm --cached .env`, commit, y avisar a Jared. Si esos valores se usan en otro lado, rotarlos. En `docker-compose.yml`, publicar MySQL solo en `127.0.0.1:3306`. Añadir `.env.local` al `.gitignore`.
+- [x] `.env` ya **no está trackeado** (commit `9b99b72`) y `docker-compose.yml` publica MySQL solo en `127.0.0.1:3307`. `.env.local` lo ignora `web/.gitignore`.
+- [ ] Si las contraseñas que estuvieron en el historial de git se usan en otro lado, rotarlas.
 
 ## Por confirmar con Jared
-- [ ] Precisión de timestamps (¿milisegundos?) para `endsAt` / `serverTime`.
-- [ ] `lastResult` cuando el jugador no responde (timeout).
-- [ ] Rangos permitidos en settings (rondas, vidas, maxPlayers) para los sliders.
-- [ ] CORS: exponer `ETag` y `X-Server-Time`; permitir `Authorization` e `If-None-Match`. Alternativa: proxy de Vite.
-- [ ] Puerto de la API (se asume 8000).
+Implementado en la API, **pendiente de que Adler lo acepte** y de pasarlo al contrato (tabla de arriba):
+
+- [~] Precisión de timestamps: milisegundos en `endsAt`, `serverTime` y `X-Server-Time`.
+- [~] `lastResult` en timeout: `chosenOptionId` y `answerTimeMs` en `null`, 0 puntos, −1 vida (SHIELD la evita).
+- [~] Rangos de settings: jugadores 2–12 · rondas 1–15 · vidas 1–5.
+- [~] CORS: permite `http://localhost:5173`, `Authorization`, `If-None-Match`, `Content-Type`; expone `ETag` y `X-Server-Time`.
+- [x] Puerto de la API: 8000 (confirmado).
+- [~] Forma de `activePower`: `PowerType | null`.
+- [~] SHIELD absorbido: campo nuevo `powerUsed` en `lastResult`. **Adler: añadirlo a `LastResult` en `web/src/api/types.ts`** (hoy no aparece en `web/src`).
+
+Siguen abiertos:
+
 - [ ] Revancha tras FINAL.
-- [ ] Forma de `activePower` (se asume `PowerType | null`).
-- [ ] Fórmula de bonus por velocidad y base por dificultad (solo para textos de ayuda en UI).
-- [ ] Fecha límite de entrega.
+- [ ] Fórmula de bonus por velocidad y base por dificultad (definitivas; hoy provisionales en `api/app/scoring.py`).
+- [ ] Fecha límite de entrega (la semana del 12 al 16 de oct; día exacto por confirmar).
+- [ ] Integración real: registrar el resultado de las Integraciones 1 y 2.
 
 ## Huecos del contrato detectados al construir el cliente (sesión 1)
+> Estado 12 oct: la API ya implementa una respuesta para los cuatro primeros (milisegundos, `powerUsed`, timeout con −1 vida, y sigue sin existir `GET /players/me`). Falta que Adler las acepte y se pasen al contrato.
+
 - [ ] **`X-Server-Time`: formato y precisión.** El contrato no dice si es ISO 8601 o epoch, y los ejemplos usan segundos enteros. Con segundos el desfase de reloj del cliente puede errar hasta ~1 s (el contador es solo visual, pero la intro dura 3 s). El cliente asume ISO 8601 (acepta también epoch) y, si falta el header, usa `serverTime` del cuerpo. Pedir milisegundos (`2026-09-04T18:30:06.250Z`) en header, `serverTime` y `endsAt`.
 - [ ] **No hay forma de saber si SHIELD absorbió la vida.** `lastResult` no trae `powerUsed`/`shieldAbsorbed` y `activePower` es `null` en el ejemplo de REVEAL. Inferirlo con `!isCorrect && livesLost === 0` es ambiguo con el timeout. Proponer a Jared un campo en `lastResult` (p. ej. `powerUsed: PowerType | null` o `shieldAbsorbed: boolean`) para animar el escudo en la pantalla 07.
 - [ ] **`lastResult` en timeout (no respondió).** Ya estaba pendiente; para desarrollar el mock asume `chosenOptionId: null`, `answerTimeMs: null`, `basePoints: 0`, `speedBonus: 0`, `pointsAwarded: 0` y **`livesLost: 1`** (el timeout se trata como fallo; SHIELD lo evita). Confirmar con Jared que el servidor hace lo mismo. Los tipos ya permiten `null` en esos dos campos (como `round-results.json`).

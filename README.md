@@ -53,10 +53,10 @@ cp .env.example .env         # cambia las contraseñas; .env no se debe commitea
 docker compose up -d
 ```
 
-La API (FastAPI) vive en `api/`; sus instrucciones las documenta el frente A.
+**API** (FastAPI en `api/`, puerto 8000): los pasos completos están en [`api/README.md`](api/README.md) (venv, `alembic upgrade head`, `uvicorn app.main:app --port 8000`). Para jugar sin más personas: `python scripts/play_bots.py --bots 3`.
 
 ## Estado
 
 - Contrato compartido v0.2 (decisiones D1–D12 confirmadas).
 - Frontend: Home, Crear sala, Unirse, Lobby, el ciclo completo de partida (intro, pregunta, reveal, marcador, final, espectador), estadísticas y resultados detallados, pantallas de error, sonido y efecto CRT, todo funcionando contra el mock. Falta la revancha (pendiente con Jared).
-- API: pendiente de integrar con el frontend (ver "Qué necesita el frontend de la API real" en [`web/README.md`](web/README.md#qué-necesita-el-frontend-de-la-api-real)).
+- API: implementada y probada (17 de 18 endpoints, 120 preguntas, 25 pruebas en verde); detalle en [`api/PLAN-API.md`](api/PLAN-API.md). Falta registrar la integración con el frontend y validarla contra MySQL real (ver "Qué necesita el frontend de la API real" en [`web/README.md`](web/README.md#qué-necesita-el-frontend-de-la-api-real)).

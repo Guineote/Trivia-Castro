@@ -1,151 +1,135 @@
 # Plan de implementación — API (frente A · Jared)
 
-> Estado verificado el 11 de octubre de 2026, rama `api`, con `main` ya fusionada. Complementa a `PLAN.md` (tareas A1–A12) y a `api/CLAUDE.md` (reglas). Si algo difiere, **gana el contrato** (`docs/contrato/`).
+> Estado verificado el **12 de octubre de 2026** sobre la rama `api` (último commit `f9cc073`, árbol limpio). Complementa a `PLAN.md` (tareas A1–A12) y a `api/CLAUDE.md` (reglas). Si algo difiere, **gana el contrato** (`docs/contrato/`). Nombre oficial del juego: **Trivia Castro**.
 
 ## 1. Dónde estamos (leído del repo)
 
-- `api/` está vacío: solo `CLAUDE.md` y `delete.txt`. No hay una línea de FastAPI.
-- Contrato v0.2 cerrado (D1–D12) con 10 JSON de ejemplo. `docs/etapa2/` es material histórico y **no es contractual** (habla de rondas FAST/BOMB y 5 poderes que no existen).
-- El Website (Adler) está completo contra un mock. `web/src/mock/simulator.ts` es una implementación probada de todas las reglas: **es tu mejor referencia**, pero lo marcado `SUPUESTO DE MOCK` no es regla del juego.
-- `docker-compose.yml` tiene un **cambio sin commitear**: `127.0.0.1:3307:3306`. La API debe conectarse al puerto **3307**, no al 3306.
-- El mock solo trae **16 preguntas**. La API necesita su propio seed.
-- Vite reenvía `/api` a `http://localhost:8000`, así que la API corre en el **puerto 8000**.
+- **La API está implementada** (M0–M5 completos y la mayor parte de M6): 17 de los 18 endpoints del contrato (todos menos `POST /questions/import`), modelos y migración Alembic, seed de 10 categorías y 120 preguntas, fases perezosas, puntuación, poderes, ranking, resultados y estadísticas, `play_bots.py` y **25 pruebas pytest en verde** (revisión del 12 de oct, sobre SQLite en memoria).
+- **Falta:** `POST /questions/import` (opcional, A12), verificar la API contra MySQL real con una partida completa y registrar las integraciones con el Website (Integración 1 y 2 del `PLAN.md`; el repo no tiene constancia de que se hayan hecho), la limpieza de salas viejas y el README/manual final (ver §8 y §9).
+- Contrato v0.2 cerrado (D1–D12) con 10 JSON de ejemplo. Las decisiones propias del frente A (§3) **no se han llevado al contrato**: esperan la revisión de Adler.
+- El Website (Adler) está completo contra un mock. `web/src/mock/simulator.ts` sigue siendo la referencia de reglas; lo marcado `SUPUESTO DE MOCK` no es regla del juego.
+- Puertos: API en **8000** (Vite reenvía `/api` ahí) y MySQL en `127.0.0.1:3307`. Contenedor y base se llaman **`trivia-castro` / `trivia_castro`**.
+- `.env` ya no está trackeado y MySQL solo escucha en `127.0.0.1`.
 
-## 2. Antes de la primera línea de código
+## 2. Arranque
 
-1. Commit de `docker-compose.yml` (3307, solo en 127.0.0.1) y de `.env.example` con la variable de conexión:
-   `DATABASE_URL=mysql+pymysql://trivia_user:change_me@127.0.0.1:3307/trivia_castro`
-2. Agrega `.env.local` al `.gitignore` raíz.
-3. Sube `api`, abre PR hacia `main` y fusiónalo. Después trabaja en ramas `feat/api-<tema>` desde `main`.
-4. Python 3.11+ y un entorno virtual en `api/.venv`. En PowerShell, un comando por línea (no admite `&&`).
-5. `docker compose up -d` y `docker compose ps` debe mostrar `healthy`.
+Ver `api/README.md` (comandos para PowerShell, uno por línea). Resumen: `docker compose up -d` desde la raíz → venv e instalación de `requirements.txt` → `alembic upgrade head` → `uvicorn app.main:app --port 8000` **sin** `--workers`. Si la tabla de preguntas está vacía, el seed corre solo al arrancar. Documentación interactiva en `http://localhost:8000/docs` (no hay `/health`: no se inventan endpoints).
 
-## 3. Decisiones tuyas (el mock las inventó)
+## 3. Decisiones del frente A (estado)
 
-Propuesta = lo que ya asume el mock, para no obligar a Adler a cambiar nada. Apruébalas o cámbialas; cada una se anota en `docs/contrato/` **antes** de programarla.
+Todas están **implementadas** en la API. El contrato no se ha editado: pasan a `docs/contrato/` cuando Adler las acepte (seguimiento en `docs/frontend/PENDIENTES.md`). Cada una vive en un solo lugar del código.
 
-| # | Tema | Propuesta | Se necesita en | ¿Toca el contrato? |
+| # | Tema | Implementación | Dónde cambiarla | ¿Toca el contrato? |
 |---|---|---|---|---|
-| 1 | Puntos base | EASY 500 · MEDIUM 800 · HARD 1100 | M4 | No |
-| 2 | Bonus de velocidad | `400·(20000 − t_ms)/20000`, redondeado, función aislada | M4 | No |
-| 3 | Timeout (no respondió) | `lastResult` con `chosenOptionId` y `answerTimeMs` en `null`, 0 puntos, **pierde 1 vida** (SHIELD la evita) | M4 | Sí, documentarlo |
-| 4 | ¿SHIELD absorbió la vida? | Agregar `powerUsed: PowerType \| null` a `lastResult` | M4 | **Sí, acordar con Adler** |
-| 5 | `activePower` | `PowerType \| null`; un solo poder por ronda; el segundo da `POWER_NOT_AVAILABLE` | M5 | Sí |
-| 6 | Rangos de `settings` | jugadores 2–12 · rondas 1–15 · vidas 1–5 (los de los sliders de la web) | M2 | Sí |
-| 7 | Rondas DOUBLE | cada tercera ronda (predecible para la demo) | M3 | Sí |
-| 8 | `pointsThisRound` en SCOREBOARD | `null`, como dice el contrato | M4 | No |
-| 9 | Desempate en el ranking | orden de unión a la sala | M5 | Sí |
-| 10 | `X-Server-Time`, `serverTime`, `endsAt` | ISO 8601 con milisegundos (`...06.250Z`) | M1 | Sí |
-| 11 | Estadísticas (D12) | `totalAnswers` cuenta solo rondas respondidas; promedio y más rápida valen `0` si nunca respondió | M5 | Sí |
-| 12 | Salir en plena partida | `DELETE` responde 204, pero la fila del participante sigue en la partida (se queda sin responder y acaba de espectador) | M2 | Sí |
-| 13 | Códigos de error extra | Agregar `NOT_FOUND` (rutas inexistentes) e `INTERNAL_ERROR` (500) a la tabla del contrato | M1 | **Sí, acordar con Adler** |
+| 1 | Puntos base | EASY 500 · MEDIUM 800 · HARD 1100 | `app/scoring.py` | No |
+| 2 | Bonus de velocidad | `max(0, round(400·(20000 − t_ms)/20000))` | `app/scoring.py` | No |
+| 3 | Timeout (no respondió) | `lastResult` con `chosenOptionId` y `answerTimeMs` en `null`, 0 puntos, **−1 vida** (SHIELD la evita) | `services/games.py` (`_close_round`) | Sí, documentarlo |
+| 4 | ¿SHIELD absorbió la vida? | Campo nuevo `powerUsed: PowerType \| null` en `lastResult` | `services/games.py` | **Sí. Adler debe añadirlo a `web/src/api/types.ts`** (hoy no existe en `web/src`) |
+| 5 | `activePower` | `PowerType \| null`; un poder por ronda (índice único en `power_uses`); el segundo → `409 POWER_NOT_AVAILABLE`; vuelve a `null` en la siguiente `ROUND_INTRO` | `services/games.py` | Sí |
+| 6 | Rangos de `settings` | jugadores 2–12 · rondas 1–15 · vidas 1–5; fuera de rango → `422 VALIDATION_ERROR` | `app/schemas.py` | Sí |
+| 7 | Rondas DOUBLE | cada tercera ronda | `services/games.py` (`create_game`) | Sí |
+| 8 | `pointsThisRound` | solo en `REVEAL`; `null` en `SCOREBOARD` | `services/games.py` | No |
+| 9 | Desempate en el ranking | orden de unión a la sala (`participant.id`) | `services/games.py` (`standings`) | Sí |
+| 10 | Timestamps | ISO 8601 con **milisegundos** en `serverTime`, `endsAt` y `X-Server-Time` | `app/clock.py` | Sí (el contrato muestra segundos) |
+| 11 | Estadísticas (D12) | `totalAnswers` cuenta solo rondas respondidas; promedio y más rápida incluyen respuestas incorrectas y valen `0` si nunca respondió; `bestRound` `{number: 0, points: 0}` sin puntos | `services/games.py` (`results`) | Sí |
+| 12 | Salir en plena partida | `DELETE` responde 204 pero la fila se conserva (se queda sin responder y acaba de espectador) | `services/rooms.py` | Sí |
+| 13 | Códigos de error extra | `NOT_FOUND` (404 de ruta inexistente) e `INTERNAL_ERROR` (500) | `app/errors.py` | **Sí, acordar con Adler** |
+| 14 | Ids | prefijo + entero de la BD: `p1`, `pt2`, `g3`, `q4`, `o5`, `c6` (el contrato los trata como cadenas opacas) | `app/ids.py` | No |
+| 15 | CORS | permite `http://localhost:5173` (`CORS_ORIGINS`), `Authorization`, `If-None-Match`, `Content-Type`; expone `ETag` y `X-Server-Time` | `app/main.py` | No |
+| 16 | Mínimo de jugadores | 2 (D4); `MIN_PLAYERS_TO_START=1` en `.env` para probar solo | `app/config.py` | No |
 
-Una discrepancia detectada: el simulador acepta jugadores 2–16 y rondas 1–20, pero los **sliders** de la web son 2–12 y 1–15 (por eso propongo los de la web).
+**Ya resueltos en el contrato (D1–D12):** efectos de poderes (HINT quita 2 incorrectas, SHIELD evita perder la vida, DOUBLE x2 y se combina con la ronda DOUBLE → x4), tipos de ronda NORMAL y DOUBLE, ajustes por defecto 8 / 10 / 3.
 
-## 4. Estructura de `api/`
+**Pendientes de confirmar con el equipo:** fórmula definitiva del bonus de velocidad y puntos base (el contrato los deja abiertos a propósito; hoy son valores provisionales), revancha tras `FINAL`, y fecha exacta de entrega.
 
-Un solo servicio, tres capas (HTTP → dominio → datos), sin sobreingeniería. SQLAlchemy **síncrono** (más simple y encaja con el bloqueo de filas).
+## 4. Estructura real de `api/`
+
+Un solo servicio, tres capas (rutas → servicios → modelos), SQLAlchemy **síncrono**. No hay carpetas `http/` ni `domain/` separadas: se mantuvo plano.
 
 ```
 api/
-├── requirements.txt        fastapi, uvicorn[standard], sqlalchemy>=2, alembic, pymysql,
-│                           cryptography, pydantic-settings, pytest, httpx
-├── alembic.ini
-├── alembic/versions/
+├── requirements.txt        versiones fijadas (fastapi, uvicorn, SQLAlchemy 2, PyMySQL, cryptography,
+│                           alembic, python-dotenv, pytest, httpx)
+├── alembic.ini · alembic/versions/0001_esquema_inicial.py
 ├── app/
-│   ├── main.py             app, middleware X-Server-Time, manejadores de error, routers
-│   ├── config.py           lee ../.env con pydantic-settings
-│   ├── clock.py            utcnow() inyectable (para probar con reloj falso)
-│   ├── http/               routers (players, rooms, games, content), deps.py (auth Bearer),
-│   │                       errors.py (ApiError), schemas.py (CamelModel y respuestas)
-│   ├── domain/             scoring.py, phases.py, ranking.py, game_service.py,
-│   │                       room_service.py, powers.py   ← reglas puras, sin FastAPI
-│   ├── db/                 session.py, models.py
-│   └── seed/               categories.json, questions.json, seed.py
-├── scripts/play_bots.py    jugadores falsos para probar solo (ver M6)
-└── tests/
+│   ├── main.py             create_app(), middleware X-Server-Time, CORS, seed al arrancar
+│   ├── config.py           lee ../.env con python-dotenv (MYSQL_*, DB_HOST, DB_PORT, DATABASE_URL,
+│   │                       MIN_PLAYERS_TO_START, CORS_ORIGINS)
+│   ├── db.py               engine, SessionLocal, get_db y GAME_LOCK
+│   ├── clock.py            now_ms()/iso() con reloj falso para pruebas
+│   ├── errors.py           ApiError, mensajes y manejadores (formato { "error": { code, message } })
+│   ├── ids.py              fmt()/parse() de ids con prefijo
+│   ├── models.py · schemas.py (CamelModel y cuerpos de petición)
+│   ├── scoring.py          puntos y bonus (lo pendiente del contrato vive aquí)
+│   ├── routers/api.py      rutas /api/v1 (capa fina)
+│   ├── services/           players, rooms, games (fases, respuestas, poderes, estado), content
+│   └── seed.py · seed_data.py   10 categorías y 120 preguntas (12 por categoría; 42 EASY, 46 MEDIUM, 32 HARD)
+├── scripts/play_bots.py    jugadores falsos (solo biblioteca estándar)
+└── tests/                  conftest.py (cliente + reloj falso), test_scoring, test_rooms, test_game
 ```
 
-## 5. Modelo de datos
+## 5. Modelo de datos (tal como está en `models.py`)
 
-Ids como enteros autoincrementales **serializados a cadena** en el JSON. El código de sala (6 caracteres) y el token son valores aparte. Todas las fechas en `DATETIME(3)` UTC.
+Ids enteros autoincrementales, serializados con prefijo en el JSON. Los instantes de fase se guardan como milisegundos epoch (`BigInteger`).
 
 | Tabla | Campos clave |
 |---|---|
 | `players` | id, nickname, `token` único |
-| `categories` | id, name |
-| `questions` / `options` | texto, dificultad, `external_id` opcional · opción con `is_correct` |
-| `rooms` | `code` único, status, ajustes (max_players, rounds, lives, category_ids JSON), `current_game_id` |
-| `participants` | room_id, player_id, nickname, is_host, score, lives, status, `active_power`; únicos `(room_id, player_id)` y `(room_id, nickname)` |
-| `participant_powers` | un renglón por poder del inventario; se marca como usado |
-| `games` | room_id, phase, `phase_start`, `phase_end` (null en FINAL), `round_index`, **`version`** |
-| `rounds` | game_id, number, type, question_id, `option_order` (JSON con el orden barajado) |
-| `submitted_answers` | round_id, participant_id, option_id, answer_time_ms · **índice único `(round_id, participant_id)`** |
-| `round_results` | una fila por participante y ronda: elegida, acertó, tiempo, base, bono, multiplicadores, puntos, vidas perdidas, `score_after` |
-| `power_uses` | quién, cuándo, ronda y `effect` (las opciones que quitó HINT) |
+| `categories` | id, name único |
+| `questions` / `options` | texto, categoría, dificultad, `external_id` único opcional · opción con `is_correct` |
+| `rooms` | `code` único (6 caracteres), status, `max_players`, `rounds`, `lives`, `category_ids` (JSON; vacío = todas). **No** guarda `current_game_id`: se calcula con la última partida de la sala |
+| `participants` | room_id, player_id, nickname, is_host, score, lives, status (`ACTIVE`/`SPECTATOR`); únicos `(room_id, player_id)` y `(room_id, nickname)` |
+| `participant_powers` | inventario: un renglón por poder y participante; `used_ms` es `null` mientras esté disponible |
+| `games` | room_id, phase, `phase_start_ms`, `phase_end_ms` (`null` en FINAL), `round_index`, **`version`** (base del ETag), `initial_order` (JSON) |
+| `rounds` | game_id, number, type, question_id, `option_order` (JSON con el orden barajado), `closed`, `ranking_after` (JSON); único `(game_id, number)` |
+| `submitted_answers` | round_id, participant_id, option_id, `answer_time_ms` · **único `(round_id, participant_id)`** (la garantía de «una respuesta por ronda» vive en la BD) |
+| `power_uses` | round_id, participant_id, power_type, `used_ms`, `removed_option_ids` (HINT); único `(round_id, participant_id)` |
+| `round_outcomes` | una fila por participante y ronda con `last_result` (JSON; `null` si ya era espectador). Es la fuente de `lastResult`, de `/rounds/{n}/results` y de las estadísticas; `rounds.ranking_after` da el historial para `positionDelta` |
 
-`round_results` es la fuente de `lastResult`, de `/rounds/{n}/results`, de las estadísticas y del historial para `positionDelta`: no hace falta guardar el ranking aparte.
+## 6. Decisiones técnicas (cómo quedó)
 
-## 6. Decisiones técnicas que conviene fijar desde el inicio
+1. **Fases perezosas, sin scheduler.** En cada petición que toca una partida (`state`, `answers`, `powers`, `ranking`, `results`, `GET /rooms/{code}`…) `games.tick` aplica, **en orden y con su hora programada**, todas las transiciones cuyo `phase_end_ms` ya pasó. Una petición tardía no desplaza las fases siguientes.
+2. **Concurrencia: un candado global, no `SELECT … FOR UPDATE`.** `get_db` toma `GAME_LOCK` (un `threading.Lock`) durante toda la petición, así que con **un solo proceso** nunca hay dos relojes ni dos escrituras sobre la misma partida. Costo: las peticiones se serializan (suficiente para la demo con pocos jugadores). Ejecutar `uvicorn` **sin `--workers`**. *(El plan original proponía bloqueo de fila; no se implementó.)*
+3. **`version`** sube con cada cambio visible (respuesta, poder, cambio de fase) y el ETag es `"<gameId>-v<version>"` (por ejemplo `"g3-v43"`).
+4. **Camino barato para el 304:** autenticar → comprobar pertenencia (`403 NOT_IN_GAME`) → `tick` → comparar `If-None-Match`; solo si cambió se arma el estado completo.
+5. **El tiempo lo mide el servidor:** `answer_time_ms = ahora − phase_start`. Una respuesta fuera de `QUESTION` se rechaza con `ROUND_NOT_ACTIVE`.
+6. **Orden de validación de `answers`:** espectador → fase y ronda actuales → opción válida → duplicado. El índice único atrapa la carrera final (`IntegrityError` → `ALREADY_ANSWERED`).
+7. **Errores y cabeceras en un solo lugar:** `ApiError` + manejadores (validación de Pydantic → `VALIDATION_ERROR`, 401/403/404 de FastAPI) y un middleware `X-Server-Time` que cubre también 304 y errores 500.
+8. **Pantalla personalizada:** `build_state` entrega `isCorrect` solo en `REVEAL`; con HINT quita las opciones eliminadas del `state` de ese jugador.
 
-1. **Fases perezosas con bloqueo de fila.** En cada petición a `state`, `answers`, `powers` y `GET /rooms/{code}` se pregunta "¿ya pasó `phase_end`?". Si no, sigue sin tocar nada. Si sí, se abre una transacción con `SELECT ... FOR UPDATE` sobre la fila del juego, se vuelve a leer y se aplican **en orden** todas las transiciones vencidas. Sin esto, con 4 jugadores consultando cada segundo, dos peticiones pueden cerrar la misma ronda dos veces.
-2. **Cada transición usa la hora programada, no la actual.** Como el simulador: `transition(game, phase_end)`. Así una petición tardía no desplaza las fases siguientes.
-3. **`version` sube dentro de la misma transacción** que cualquier cambio visible: respuesta, poder, cambio de fase. El ETag es `"<gameId>-v<version>"`.
-4. **Camino barato para el 304:** autenticar → comprobar pertenencia (`403 NOT_IN_GAME`) → aplicar fases vencidas → comparar ETag. Solo si cambió se arma el estado completo.
-5. **El tiempo lo mide el servidor:** `answer_time_ms = ahora − phase_start`. Una respuesta tardía se rechaza con `ROUND_NOT_ACTIVE`.
-6. **Orden de validación de `answers`** (igual que el simulador): espectador → fase y ronda actuales → opción válida → duplicado.
-7. **Un solo proceso:** `uvicorn app.main:app --port 8000` **sin** `--workers`.
-8. **Errores y cabeceras** salen de un solo lugar: `ApiError` + manejadores (validación de Pydantic → `VALIDATION_ERROR`, 401, 404, 500) y un middleware `X-Server-Time` que cubre también 304 y errores.
-9. **No inventes endpoints.** Por eso no hay `/health`: para comprobar que arrancó usa `/docs`.
+## 7. Hitos — estado
 
-## 7. Hitos
-
-Los días suponen entrega el viernes 16; ajusta cuando confirmen la fecha. Cada hito termina con pruebas en verde y un commit pequeño (`feat(api): ...`).
-
-| Hito | Día | Qué se construye (tareas del `PLAN.md`) | Está listo cuando |
-|---|---|---|---|
-| **M0** Entorno | Dom 11 | Sección 2 | `docker compose ps` en `healthy`, venv listo, `/docs` abre |
-| **M1** Esqueleto + stubs (A2) | Dom 11 | `config`, `CamelModel`, middleware, errores, los 19 endpoints devolviendo los JSON de `docs/contrato/ejemplos/` con ETag/304 | Adler cambia `VITE_USE_MOCK=false` y su cliente HTTP, el polling y el 304 funcionan contra tu servidor |
-| **M2** Datos, jugadores y salas (A1, A3, A4) | Lun 12 | Modelos + migración inicial, `POST /players` y token, crear/consultar/modificar sala, unirse (201/200, `ROOM_FULL`, `NICKNAME_TAKEN`, `GAME_ALREADY_STARTED`), salir/expulsar, traspaso de host | **Integración 1:** Home → Crear → Unirse → Lobby real con dos navegadores |
-| **M3** Contenido, inicio y `state` (A5, A6) | Mar 13 | Seed (ver abajo), `/categories`, `/questions`, `POST /rooms/{code}/games`, constructor de `state` por fase, ETag/304 | `state` en ROUND_INTRO tiene exactamente las claves de `state-round-intro.json` |
-| **M4** Fases, respuestas y puntos (A7, A8) | Mié 14 | Fases perezosas con bloqueo, `advance`, `answers`, cierre de ronda (puntos, vidas, timeout, espectador), REVEAL, SCOREBOARD, FINAL, `room.status = FINISHED` | Una partida de 3 rondas con reloj falso pasa de punta a punta en pytest |
-| **M5** Ranking, resultados y poderes (A9, A10) | Jue 15 | `/ranking` con `positionDelta`, `/rounds/{n}/results`, `/results` con estadísticas, HINT, SHIELD y DOUBLE | Las formas de `ranking.json`, `round-results.json` y `results.json` coinciden |
-| **M6** Bots, forma e integración (A11) | Jue 15 – Vie 16 | `scripts/play_bots.py`, pruebas de forma contra los ejemplos, lista de verificación de la guía (§10) | **Integración 2:** partida completa con Adler |
-| **M7** Pulido | Vie 16 | README de `api/`, limpieza de salas, ensayo con varios dispositivos, `POST /questions/import` solo si sobra tiempo | Ensayo de la exposición sin errores |
-
-**Seed de preguntas (parte de M3):** 10 categorías (los ejemplos fijan `c1 = Videojuegos`; los otros nombres del mock son inventados) y al menos **120 preguntas**, mínimo 12 por categoría, con 4 opciones y exactamente 1 correcta, mezclando EASY, MEDIUM y HARD. Con menos, filtrar por una sola categoría con 15 rondas daría `NOT_ENOUGH_QUESTIONS`. Incluye la pregunta del PlayStation (`q27`) porque los ejemplos la usan.
-
-**Qué copiar del simulador (por función):**
-
-| Python | Función en `simulator.ts` |
-|---|---|
-| Crear partida | `startGame` |
-| Fases y transiciones | `tick`, `transition`, `enter` |
-| Cierre de ronda | `closeRound` |
-| Constructor de `state` | `getState`, `stateQuestion` |
-| `positionDelta` | `rankingEntries` |
-| Validación de respuesta | `answer` |
-| Poderes | `usePower` |
-| Estadísticas finales | `results` |
+| Hito | Qué se construye (tareas del `PLAN.md`) | Estado |
+|---|---|---|
+| **M0** Entorno | docker-compose (3307, solo `127.0.0.1`), `.env.example`, venv | ✅ Hecho |
+| **M1** Esqueleto + stubs (A2) | Se **omitieron los stubs**: se implementó directamente la lógica real, con middleware, errores y CORS | ✅ Superado |
+| **M2** Datos, jugadores y salas (A1, A3, A4) | Modelos + migración, `POST /players`, salas, unirse (201/200), salir/expulsar, traspaso de host | ✅ Hecho |
+| **M3** Contenido, inicio y `state` (A5, A6) | Seed (10 × 12 = 120 preguntas), `/categories`, `/questions`, `POST /rooms/{code}/games`, `state` por fase con ETag/304 | ✅ Hecho |
+| **M4** Fases, respuestas y puntos (A7, A8) | Fases perezosas, `advance`, `answers`, cierre de ronda, espectador, `room.status = FINISHED` | ✅ Hecho |
+| **M5** Ranking, resultados y poderes (A9, A10) | `/ranking` con `positionDelta`, `/rounds/{n}/results`, `/results`, HINT / SHIELD / DOUBLE | ✅ Hecho |
+| **M6** Bots, forma e integración (A11) | `scripts/play_bots.py` y pruebas de forma contra `docs/contrato/ejemplos/` listos. **Integración 1 y 2 con Adler: sin constancia en el repo** | 🟡 Parcial |
+| **M7** Pulido | README de `api/` listo. Falta: limpieza de salas, ensayo con varios dispositivos y, si sobra tiempo, `POST /questions/import` (A12) | 🔲 Pendiente |
 
 ## 8. Pruebas
 
-- **Unitarias (sin base de datos):** puntos (el ejemplo del contrato: (800 + 316) × 2 = 2232), bono de velocidad, multiplicadores, transiciones de fase, `positionDelta`.
-- **De servicio con reloj falso:** respuesta duplicada, respuesta tardía, timeout con y sin SHIELD, paso a espectador, dos peticiones simultáneas en el borde de una fase.
-- **De forma:** comparar las claves y los enums de cada respuesta real con `docs/contrato/ejemplos/*.json`, como hace `web/src/test/fixtures.test.ts`. Detecta desvíos antes de integrar.
-- **Base de pruebas separada** (`trivia_castro_test` en el mismo contenedor), porque el índice único y `FOR UPDATE` se comportan distinto en SQLite.
-- **Humo con curl.exe** (en PowerShell hay que escribir `curl.exe`): ejemplos en la guía, §8.
+- **25 pruebas pytest en verde** (`python -m pytest -q` desde `api/`): `test_scoring` (4: ejemplo del contrato (800 + 316) × 2 = 2232, bonus acotado, multiplicadores), `test_rooms` (8: headers y errores, nickname, sala con la forma del contrato, 201/200, ajustes, salir/expulsar y host, categorías y preguntas) y `test_game` (13: iniciar y errores, ETag/304, acceso, partida completa de 3 rondas, resultados antes del final, respuesta tardía, timeout con y sin SHIELD, HINT, DOUBLE de poder y de ronda, espectador, `advance`, reloj perezoso hasta FINAL, índice único en la BD).
+- **Pruebas de forma:** comparan las claves de cada respuesta real con `docs/contrato/ejemplos/*.json` (`powerUsed` se permite como campo extra de `lastResult`).
+- **Limitación:** las pruebas usan **SQLite en memoria** y un reloj falso; no ejercitan MySQL. Falta una corrida completa contra el contenedor (`play_bots.py` es la forma de hacerla).
+- **Humo manual:** `curl.exe` (ejemplos en `docs/frontend/GUIA-PARA-LA-API.md`, §8) y `play_bots.py`.
 
-## 9. Riesgos
+## 9. Pendientes y riesgos
 
-- **Tiempo.** La fecha exacta de entrega sigue sin confirmarse. Si se acorta, lo imprescindible es M1 a M4; poderes, estadísticas y el seed grande van al final (igual que en las prioridades de `PLAN.md`).
-- **Probar solo.** Con una sola persona no se puede jugar, y los bots de Adler solo existen en su mock. `play_bots.py` (jugadores que se unen, responden al azar y usan poderes) es lo que te permite recorrer una partida sin pedirle a nadie que se conecte.
-- **Carga del polling.** Cada jugador pide `state` una vez por segundo: índices en las claves foráneas y sin consultas repetidas por jugador.
-- **Desvío del contrato.** Cualquier cambio de campos se avisa y se escribe en `docs/contrato/` antes de tocar código.
-- **Windows.** PowerShell sin `&&`; `curl.exe`; instalar `cryptography` para que PyMySQL pueda autenticarse contra MySQL 8.4.
+- **Integración con el Website.** Registrar el resultado de la Integración 1 (Home → Crear → Unirse → Lobby) y la 2 (partida completa). `web/.env.local` está en `VITE_USE_MOCK=false` en la máquina de desarrollo, pero eso no prueba nada. Primero Adler debe añadir `powerUsed` a `web/src/api/types.ts` y aceptar los puntos de §3.
+- **Validar en MySQL real:** `alembic upgrade head`, seed y una partida con `play_bots.py` (la migración y el índice único nunca se han probado en las pruebas automáticas).
+- **Salas sin limpieza.** Una sala solo se borra si queda vacía en `WAITING`; las partidas terminadas se acumulan en la BD (irrelevante para la demo).
+- **Candado global:** serializa todas las peticiones; aceptable con 2–12 jugadores en un solo proceso.
+- **`DELETE` de un participante que no existe** responde `404 ROOM_NOT_FOUND` (el contrato no define un código específico).
+- **`POST /questions/import`** no existe (opcional; sin fuente de API externa definida).
+- **Revancha** y **pantalla de Apuesta** no se construyen.
+- **Tiempo.** La fecha exacta de entrega (semana del 12 al 16 de octubre) sigue sin confirmarse.
 
 ## 10. Flujo de trabajo
 
-- Ramas `feat/api-<tema>`, PR hacia `main`, commits pequeños. No tocar `web/`. No editar `docs/contrato/` sin avisar a Adler.
+- Ramas `feat/api-<tema>`, PR hacia `main`, commits pequeños (`feat(api): …`). No tocar `web/` ni editar `docs/contrato/` sin avisar a Adler.
 - Antes de pedir revisión: pruebas en verde.
 - Nunca commitear `.env`.

@@ -8,8 +8,8 @@ Documento para **Jared**. Explica qué hay hecho en `web/`, qué espera exactame
 |---|---|
 | Contrato (`docs/contrato/`) | v0.2 cerrado, decisiones D1–D12 confirmadas |
 | Frontend (`web/`) | Completo contra un **mock**: Home, Crear sala, Unirse, Lobby, ciclo de partida (intro, pregunta, reveal, marcador, final, espectador), estadísticas, errores, sonido |
-| API (`api/`) | Vacía (solo un `ignore.txt`). Todo lo del frente A del [`PLAN.md`](../../PLAN.md) está por hacer |
-| Integración real | Pendiente: el frontend nunca ha hablado con una API de verdad |
+| API (`api/`) | **Implementada y probada** (12 oct): 17 de 18 endpoints, 120 preguntas, 25 pruebas pytest. Ver [`api/PLAN-API.md`](../../api/PLAN-API.md) |
+| Integración real | Pendiente de registrar: el repo no tiene constancia de una partida completa del frontend contra la API real |
 
 Lo importante: **no estás bloqueado por el frontend ni al revés**. El frontend ya funciona contra el mock; en cuanto tu API cumpla el contrato, se cambia una variable de entorno y se prueban juntos.
 
@@ -227,12 +227,14 @@ app.add_middleware(
 
 ## 10. Lista rápida de verificación (para marcar)
 
-- [ ] `X-Server-Time` en todas las respuestas, también 304 y errores.
-- [ ] `ETag` `"<gameId>-v<version>"` + `Vary: Authorization` en `GET /state`; 304 sin cuerpo.
-- [ ] Errores `{ "error": { "code", "message" } }`, incluidos los de validación de Pydantic.
-- [ ] camelCase e ids como cadenas.
-- [ ] `POST /rooms` devuelve `participantId`; `POST /rooms/{code}/players` devuelve 201 o 200.
-- [ ] Un solo proceso con relojes de fase (o evaluación perezosa por petición).
-- [ ] `GET /state` sin `isCorrect` fuera de `REVEAL`; `lastResult` solo en `REVEAL` y `SCOREBOARD`.
+> Estado 12 oct: la API cumple los puntos marcados (verificado con pruebas, sobre SQLite). Falta confirmarlos de punta a punta con el frontend y MySQL real, y sigue abierta la casilla de las decisiones en el contrato.
+
+- [x] `X-Server-Time` en todas las respuestas, también 304 y errores.
+- [x] `ETag` `"<gameId>-v<version>"` + `Vary: Authorization` en `GET /state`; 304 sin cuerpo.
+- [x] Errores `{ "error": { "code", "message" } }`, incluidos los de validación de Pydantic.
+- [x] camelCase e ids como cadenas.
+- [x] `POST /rooms` devuelve `participantId`; `POST /rooms/{code}/players` devuelve 201 o 200.
+- [x] Un solo proceso con relojes de fase (o evaluación perezosa por petición).
+- [x] `GET /state` sin `isCorrect` fuera de `REVEAL`; `lastResult` solo en `REVEAL` y `SCOREBOARD`.
 - [ ] Decididas las preguntas de la sección 5 y anotadas en el contrato.
-- [ ] `.env` fuera del repo y MySQL solo en `127.0.0.1` (ver `PENDIENTES.md`).
+- [x] `.env` fuera del repo y MySQL solo en `127.0.0.1` (ver `PENDIENTES.md`).
