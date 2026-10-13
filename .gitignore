@@ -11,3 +11,5 @@ dist/
 .vscode/
 *.log
 .claude/settings.local.json
+*.pem
+*.key
