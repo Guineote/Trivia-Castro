@@ -8,13 +8,14 @@ Solo usa la biblioteca estándar.
 """
 import argparse
 import json
+import os
 import random
 import threading
 import time
 import urllib.error
 import urllib.request
 
-BASE = "http://localhost:8000/api/v1"
+BASE = os.environ.get("API_BASE", "http://localhost:8000/api/v1")  # p. ej. https://triviacastro.<región>.cloudapp.azure.com/api/v1
 
 
 def call(method: str, path: str, token: str | None = None, body: dict | None = None):

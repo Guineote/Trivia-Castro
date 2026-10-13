@@ -24,6 +24,9 @@ def database_url() -> str | URL:
     )
 
 
+# Website compilado (en Docker: /app/web_dist). Si no existe, la API solo sirve /api/v1.
+WEB_DIST = Path(os.getenv("WEB_DIST", ROOT / "web" / "dist")) if os.getenv("SERVE_WEB", "1") == "1" else None
+
 # D4: mínimo 2 jugadores para iniciar (1 en desarrollo: MIN_PLAYERS_TO_START=1).
 MIN_PLAYERS_TO_START = int(os.getenv("MIN_PLAYERS_TO_START", "2"))
 CORS_ORIGINS = [o for o in os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",") if o]

@@ -1,0 +1,7 @@
+# HTTPS automático (Let's Encrypt) para el dominio de la variable DOMAIN.
+# Una sola URL: Caddy reenvía todo a la API, que sirve también el Website (sin CORS).
+{$DOMAIN} {
+	@static path / /index.html /assets/*
+	encode @static zstd gzip
+	reverse_proxy api:8000
+}
