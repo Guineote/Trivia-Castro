@@ -55,6 +55,8 @@ Salir de la sala, o expulsar a alguien si quien llama es el host.
 ### `POST /rooms/{code}/games` 👑
 Inicia la partida desde la sala de espera (botón INICIAR). El servidor elige preguntas, crea las rondas y arranca el scheduler en `ROUND_INTRO`.
 
+**Revancha (D13, propuesta):** también se acepta con la sala en `FINISHED` (botón JUGAR OTRA VEZ del host): misma sala, mismos participantes y ajustes, con puntaje, vidas y poderes reiniciados.
+
 - **Request:** vacío.
 - **201:** `{ "gameId": "g8a3", "phase": "ROUND_INTRO", "version": 1 }`
 - **Errores:** 401, 403 `NOT_HOST`, 404 `ROOM_NOT_FOUND`, 409 `GAME_ALREADY_STARTED`, 409 `NOT_ENOUGH_PLAYERS`, 409 `NOT_ENOUGH_QUESTIONS`

@@ -12,6 +12,8 @@ import { RollingNumber } from '@/components/RollingNumber/RollingNumber'
 import { ReconnectBanner } from '@/components/ReconnectBanner/ReconnectBanner'
 import { accuracy, formatPoints, formatSeconds } from '@/lib/format'
 import { dur, glitchIn } from '@/lib/motion'
+import { RematchControl } from '../game/RematchControl'
+import { useRematch } from '../game/useRematch'
 import styles from './Results.module.css'
 
 type View = 'cards' | 'table'
@@ -156,6 +158,7 @@ export default function Results() {
   const navigate = useNavigate()
   const session = useSession()
   const [view, setView] = useState<View>('cards')
+  const rematch = useRematch(gameId)
 
   const query = useQuery({
     queryKey: ['results', gameId],
@@ -216,8 +219,8 @@ export default function Results() {
         <PixelButton color="ghost" onClick={() => navigate(`/partida/${gameId}`)}>
           VOLVER AL PODIO
         </PixelButton>
-        {/* Revancha pendiente con Jared: por ahora se vuelve al inicio. */}
-        <PixelButton color="magenta" onClick={() => navigate('/')}>
+        <RematchControl rematch={rematch} />
+        <PixelButton color="magenta" onClick={() => void rematch.leave()}>
           SALIR
         </PixelButton>
       </footer>

@@ -47,8 +47,10 @@ export default function Reveal({ state, maxLives }: GameScreenProps) {
     return id === chosenId ? 'wrong' : 'neutral'
   }
 
-  // SCUDO: el contrato no dice si absorbió (ver PENDIENTES); se infiere de activePower + livesLost.
-  const shieldSaved = Boolean(result && !result.isCorrect && result.livesLost === 0 && me.activePower === 'SHIELD')
+  // La API manda `powerUsed` en lastResult; si faltara (mock viejo), se cae a `activePower`.
+  const shieldSaved = Boolean(
+    result && !result.isCorrect && result.livesLost === 0 && (result.powerUsed ?? me.activePower) === 'SHIELD',
+  )
   const timedOut = Boolean(result && result.chosenOptionId === null)
 
   let headline = ''

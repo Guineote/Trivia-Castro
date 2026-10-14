@@ -1,0 +1,43 @@
+.waiting {
+  align-self: center;
+  padding: 10px 12px;
+  color: var(--cyan);
+  font-family: var(--font-title);
+  font-size: 16px;
+  animation: blink 1.2s steps(1) infinite;
+}
+
+.error {
+  flex-basis: 100%;
+  color: var(--red);
+  font-weight: 700;
+  text-align: center;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  display: grid;
+  place-items: center;
+  background: rgb(13 11 31 / 0.88);
+}
+
+.go {
+  color: var(--yellow);
+  font-family: var(--font-title);
+  font-size: clamp(32px, 9vw, 88px);
+  font-size: round(down, clamp(32px, 9vw, 88px), 8px);
+  text-shadow: 8px 8px 0 var(--magenta);
+}
+
+@keyframes blink {
+  0%,
+  69% {
+    opacity: 1;
+  }
+  70%,
+  99% {
+    opacity: 0.35;
+  }
+}

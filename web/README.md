@@ -41,6 +41,35 @@ cp .env.example .env.local          # bash
 
 Al cambiar `.env.local` hay que reiniciar `npm run dev`. Para un `build` de producción borra `.env.local` (si no, el mock entra en el bundle).
 
+### Probar con la API real (3 terminales)
+
+Con `VITE_USE_MOCK=false` en `web/.env.local` (o, solo para esa sesión de PowerShell, `$env:VITE_USE_MOCK='false'` antes de `npm run dev`: la variable de la terminal gana sobre el archivo). Desde la raíz del repo, en PowerShell:
+
+```powershell
+# 1. API (la guía completa está en api/README.md; necesita MySQL con docker compose)
+cd api
+.venv\Scripts\python -m uvicorn app.main:app --port 8000   # SIN --workers
+```
+
+```powershell
+# 2. Frontend
+cd web
+npm install
+npm run dev                                                  # abre la URL que imprime Vite
+```
+
+```powershell
+# 3. (opcional) jugadores falsos que se unen a TU sala
+cd api
+.venv\Scripts\python scripts\play_bots.py --room TUCODIGO --bots 3
+```
+
+Sin bots: una pestaña normal y otra en incógnito (cada una guarda su propia sesión). Notas:
+
+- Los bots de `play_bots.py` juegan **una** partida y se van; en una revancha se quedan en la sala sin responder (acaban de espectador). Para probar la revancha con varios jugadores usa dos navegadores.
+- Sin Docker se puede correr la API sobre SQLite: `DATABASE_URL=sqlite:///archivo.db?check_same_thread=false`, crear las tablas con `Base.metadata.create_all` y sembrar con `app.seed` (así se verificó el 14 oct).
+- Con la API real el panel DEV solo muestra el monitor de red; sus botones de simulación son del mock.
+
 ### El mock
 
 - Es un servidor falso a nivel de `fetch`: devuelve `Response` reales con `ETag`, `304`, `X-Server-Time` y errores `{ "error": { "code", "message" } }`, así que el **mismo cliente real** se ejercita en mock.
@@ -73,7 +102,9 @@ Numeración de [`docs/frontend/pantallas-spec.md`](../docs/frontend/pantallas-sp
 
 Pantalla 14 (sala llena / código inválido / partida ya iniciada): `ErrorPanel` con un fantasma pixel, titulado por `error.code`. Se muestra desde Unirse (`ROOM_FULL`, `ROOM_NOT_FOUND`, `GAME_ALREADY_STARTED`), el Lobby y la partida. El banner "RECONECTANDO..." (pantalla 13) aparece cuando el polling lleva 2 o más fallos seguidos, sin bloquear la pantalla.
 
-Aún no está: la revancha (el botón del final solo vuelve al inicio; pendiente con Jared) y la pantalla de Apuesta (no está definida en el contrato).
+**Revancha (D13):** en el podio y en los resultados, el host ve **JUGAR OTRA VEZ** (`POST /rooms/{code}/games`) y los demás **ESPERANDO AL HOST...**; todos consultan `GET /rooms/{code}` y, al ver un `currentGameId` distinto, entran solos a la nueva partida. **SALIR** hace `DELETE` de la sala y vuelve a Home. Necesita `roomCode` en la sesión (se guarda al crear o unirse) y la sala en `FINISHED`.
+
+No se construye: la pantalla de Apuesta (no está definida en el contrato).
 
 ## Sonido y efecto CRT
 

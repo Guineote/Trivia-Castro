@@ -1,6 +1,8 @@
 import secrets
+import unicodedata
 
 from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.config import MIN_PLAYERS_TO_START
@@ -12,6 +14,12 @@ from app.services import games
 
 CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 DEFAULT_SETTINGS = {"max_players": 8, "rounds": 10, "lives": 3}
+
+
+def _name_key(name: str) -> str:
+    """Apodo sin mayúsculas ni acentos: así lo compara MySQL (utf8mb4_0900_ai_ci) en el índice único (room_id, nickname)."""
+    stripped = "".join(c for c in unicodedata.normalize("NFKD", name) if not unicodedata.combining(c))
+    return stripped.casefold()
 
 
 def find_room(db: Session, code: str) -> Room:
@@ -121,11 +129,16 @@ def join_room(db: Session, player: Player, code: str, nickname: str | None) -> t
     if len(members) >= room.max_players:
         raise ApiError(409, "ROOM_FULL")
     name = nickname or player.nickname
-    if any(p.nickname.lower() == name.lower() for p in members):
+    if any(_name_key(p.nickname) == _name_key(name) for p in members):
         raise ApiError(422, "NICKNAME_TAKEN")
     member = Participant(room_id=room.id, player_id=player.id, nickname=name, is_host=False)
     db.add(member)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        # Red de seguridad: otras equivalencias de la collation de MySQL que _name_key no cubra (p. ej. ß = ss).
+        db.rollback()
+        raise ApiError(422, "NICKNAME_TAKEN") from None
     return True, {"participantId": fmt("pt", member.id), "participants": room_dict(db, room)["participants"]}
 
 
@@ -157,7 +170,8 @@ def start_game(db: Session, player: Player, code: str) -> dict:
     me = participant_of(db, room, player)
     if me is None or not me.is_host:
         raise ApiError(403, "NOT_HOST")
-    if room.status != "WAITING":
+    # D13 (revancha): también se puede iniciar desde una sala FINISHED; solo se rechaza con una partida en curso.
+    if room.status == "IN_GAME":
         raise ApiError(409, "GAME_ALREADY_STARTED")
     members = participants_of(db, room)
     if len(members) < MIN_PLAYERS_TO_START:
