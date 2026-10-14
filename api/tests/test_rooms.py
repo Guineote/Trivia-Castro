@@ -147,3 +147,14 @@ def test_revancha_sigue_validando_jugadores(api):
     room = api.room(ana, rounds=1)
     # una sola persona no puede iniciar (D4), tampoco en revancha
     assert api.c.post(f"/api/v1/rooms/{room['code']}/games", headers=ana["h"]).json()["error"]["code"] == "NOT_ENOUGH_PLAYERS"
+
+
+def test_apodo_repetido_ignora_mayusculas_y_acentos(api):
+    """MySQL (utf8mb4_0900_ai_ci) trata «José» y «Jose» como iguales en el índice único: la API debe dar 422, no 500."""
+    host = api.player("José")
+    room = api.room(host)
+    for variante in ["Jose", "JOSÉ", "jose", "josé", "JOSE"]:
+        r = api.join(room, api.player(variante))
+        assert (r.status_code, r.json()["error"]["code"]) == (422, "NICKNAME_TAKEN"), variante
+    # un apodo realmente distinto sigue entrando
+    assert api.join(room, api.player("Josefina")).status_code == 201
