@@ -43,7 +43,9 @@ Corrida con la API de Jared sobre SQLite (sin Docker) y `VITE_USE_MOCK=false`; u
 - [x] `NICKNAME_TAKEN` real (422) → la pantalla pide otro nombre y entra con el nuevo (D3).
 - [x] `GET /state` con `ETag` `"g5-v10"`, `Vary: Authorization`, `304` con `X-Server-Time` en milisegundos.
 - [x] Revancha como host (se reinicia puntaje y poderes) y como invitado (espera y entra sola).
-- [ ] Sin probar: MySQL en Docker, varios dispositivos en red, Azure.
+- [x] **MySQL 8.4.4 (14 oct, Adler):** instancia nativa temporal (mismo motor que la imagen `mysql:8.4`; el contenedor en sí no se probó). `alembic upgrade head` crea las 12 tablas con sus índices únicos (incluido `uq_answer_round_participant`), el seed carga 120 preguntas / 480 opciones; partida de 4 jugadores con `play_bots.py`, revancha (3 filas de poderes por jugador, 0 respuestas duplicadas), 7 jugadores enviando cada respuesta dos veces a la vez (siempre un 202 y un 409), apodos con acento y emoji (utf8mb4) y reinicio de la API en plena partida (el estado sobrevive).
+- [x] **Hallazgo solo de MySQL, corregido en `fix/api-apodos-mysql`:** el índice único `(room_id, nickname)` usa la collation `utf8mb4_0900_ai_ci` (ignora mayúsculas **y acentos**); con el host `José`, entrar como `Jose`/`jose`/`JOSE` daba **500** en vez de `422 NICKNAME_TAKEN`. SQLite no lo detecta, por eso las pruebas pasaban. Arreglo: comparar apodos sin acentos (`_name_key`) y convertir un `IntegrityError` al insertar en `422 NICKNAME_TAKEN`.
+- [ ] Sin probar: el contenedor de Docker, varios dispositivos en red, Azure.
 
 ## Seguridad
 - [x] `.env` ya **no está trackeado** (commit `9b99b72`) y `docker-compose.yml` publica MySQL solo en `127.0.0.1:3307`. `.env.local` lo ignora `web/.gitignore`.
