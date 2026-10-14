@@ -86,7 +86,8 @@ Todo lo de abajo funciona contra el mock (`VITE_USE_MOCK=true`). Detalle de coma
 - Base: cliente HTTP (ETag/304, `X-Server-Time`, errores por `error.code`), tipos del contrato, mock + DevPanel, tokens y componentes arcade.
 - Pantallas: Home, Crear sala, Unirse, Lobby, ciclo de partida (intro, pregunta, reveal, marcador, final, espectador), estadísticas/resultados (`/partida/:id/resultados`), pantalla de error con fantasma pixel y banner de reconexión.
 - Extras: sonido WebAudio (`src/lib/sound.ts`, mute persistente, sin autoplay) y efecto CRT opcional (`src/lib/prefs.ts`).
-- Falta: revancha tras FINAL (pendiente con Jared) y probar contra la API real.
+- Revancha (D13): JUGAR OTRA VEZ / ESPERANDO AL HOST en Final y Resultados (`src/screens/game/useRematch.ts`, `RematchControl.tsx`). La propuesta de contrato D13 está en `docs/contrato/README.md`, pendiente de aprobar por Jared.
+- Probado contra la API real el 14 oct (ver «Verificación del frontend contra la API real» en `docs/frontend/PENDIENTES.md`). Falta: MySQL en Docker, varios dispositivos en red y Azure.
 
 ## Cómo seguir
 1. Antes de tocar nada, lee `docs/contrato/` y `docs/frontend/PENDIENTES.md` (los supuestos del mock están marcados `SUPUESTO DE MOCK` en `src/mock/simulator.ts`).

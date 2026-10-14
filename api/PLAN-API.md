@@ -41,7 +41,7 @@ Todas están **implementadas** en la API. El contrato no se ha editado: pasan a 
 
 **Ya resueltos en el contrato (D1–D12):** efectos de poderes (HINT quita 2 incorrectas, SHIELD evita perder la vida, DOUBLE x2 y se combina con la ronda DOUBLE → x4), tipos de ronda NORMAL y DOUBLE, ajustes por defecto 8 / 10 / 3.
 
-**Pendientes de confirmar con el equipo:** fórmula definitiva del bonus de velocidad y puntos base (el contrato los deja abiertos a propósito; hoy son valores provisionales), revancha tras `FINAL`, y fecha exacta de entrega.
+**Pendientes de confirmar con el equipo:** fórmula definitiva del bonus de velocidad y puntos base (el contrato los deja abiertos a propósito; hoy son valores provisionales), fecha exacta de entrega. La **revancha** se añadió el 14 oct (D13, propuesta de Adler pendiente de tu visto bueno).
 
 ## 4. Estructura real de `api/`
 
@@ -126,7 +126,7 @@ Ids enteros autoincrementales, serializados con prefijo en el JSON. Los instante
 - **`DELETE` de un participante que no existe** responde `404 ROOM_NOT_FOUND` (el contrato no define un código específico).
 - **`POST /questions/import`** no existe y **se descarta** (se usa el seed de 120 preguntas).
 - **Manual de la API** (entregable): pendiente; se puede escribir ya con las partes estables.
-- **Revancha** y **pantalla de Apuesta** no se construyen.
+- **Revancha (D13, 14 oct):** `POST /rooms/{code}/games` también acepta salas `FINISHED` (cambio de 1 línea en `rooms.start_game`) y `games.create_game` borra el inventario de poderes anterior (si no, los poderes sin usar se acumulaban). Pruebas: `test_revancha_*` en `tests/test_rooms.py`. **Limitación:** `leave_room` fuera de `WAITING` conserva la fila, así que quien se va igual entra a la revancha sin responder; y `results()` de una partida vieja muestra el puntaje reiniciado una vez que empieza la revancha (el puntaje vive en `participants`). La pantalla de **Apuesta** no se construye.
 - **Tiempo.** La fecha exacta de entrega (semana del 12 al 16 de octubre) sigue sin confirmarse.
 
 ## 10. Flujo de trabajo

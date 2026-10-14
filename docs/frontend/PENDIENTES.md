@@ -36,6 +36,15 @@ La API en `api/` toma estas decisiones donde el contrato no decía nada. **No se
 | Mínimo de jugadores | 2 para iniciar (D4); `MIN_PLAYERS_TO_START=1` en `.env` para probar solo | No |
 | Concurrencia | Un candado global y un solo proceso; las fases se evalúan por petición | No |
 
+## Verificación del frontend contra la API real (14 oct 2026, Adler)
+Corrida con la API de Jared sobre SQLite (sin Docker) y `VITE_USE_MOCK=false`; un navegador y bots (uno que sigue la revancha). Resultado:
+- [x] Crear sala, unirse, lobby (polling), iniciar, partida completa de 2 rondas, podio, estadísticas y SALIR (`DELETE` → 204).
+- [x] Escudo en timeout: `lastResult.powerUsed = "SHIELD"`, `livesLost = 0`. Sin escudo: −1 vida y paso a espectador (`becameSpectator`).
+- [x] `NICKNAME_TAKEN` real (422) → la pantalla pide otro nombre y entra con el nuevo (D3).
+- [x] `GET /state` con `ETag` `"g5-v10"`, `Vary: Authorization`, `304` con `X-Server-Time` en milisegundos.
+- [x] Revancha como host (se reinicia puntaje y poderes) y como invitado (espera y entra sola).
+- [ ] Sin probar: MySQL en Docker, varios dispositivos en red, Azure.
+
 ## Seguridad
 - [x] `.env` ya **no está trackeado** (commit `9b99b72`) y `docker-compose.yml` publica MySQL solo en `127.0.0.1:3307`. `.env.local` lo ignora `web/.gitignore`.
 - [ ] Si las contraseñas que estuvieron en el historial de git se usan en otro lado, rotarlas.
@@ -53,7 +62,7 @@ Implementado en la API, **pendiente de que Adler lo acepte** y de pasarlo al con
 
 Siguen abiertos:
 
-- [ ] Revancha tras FINAL.
+- [~] Revancha tras FINAL: **implementada el 14 oct (D13)**: `POST /rooms/{code}/games` acepta salas `FINISHED` (ver `docs/contrato/README.md` D13). Pendiente de que Jared la apruebe en el PR.
 - [ ] Fórmula de bonus por velocidad y base por dificultad (definitivas; hoy provisionales en `api/app/scoring.py`).
 - [ ] Fecha límite de entrega (la semana del 12 al 16 de oct; día exacto por confirmar).
 - [x] Integración real: probada a mano el 12 oct (API + Website con `VITE_USE_MOCK=false`, partida completa, todos los poderes; Adler lo vio).
@@ -62,7 +71,7 @@ Siguen abiertos:
 > Estado 12 oct: la API ya implementa una respuesta para los cuatro primeros (milisegundos, `powerUsed`, timeout con −1 vida, y sigue sin existir `GET /players/me`). Falta que Adler las acepte y se pasen al contrato.
 
 - [ ] **`X-Server-Time`: formato y precisión.** El contrato no dice si es ISO 8601 o epoch, y los ejemplos usan segundos enteros. Con segundos el desfase de reloj del cliente puede errar hasta ~1 s (el contador es solo visual, pero la intro dura 3 s). El cliente asume ISO 8601 (acepta también epoch) y, si falta el header, usa `serverTime` del cuerpo. Pedir milisegundos (`2026-09-04T18:30:06.250Z`) en header, `serverTime` y `endsAt`.
-- [ ] **No hay forma de saber si SHIELD absorbió la vida.** `lastResult` no trae `powerUsed`/`shieldAbsorbed` y `activePower` es `null` en el ejemplo de REVEAL. Inferirlo con `!isCorrect && livesLost === 0` es ambiguo con el timeout. Proponer a Jared un campo en `lastResult` (p. ej. `powerUsed: PowerType | null` o `shieldAbsorbed: boolean`) para animar el escudo en la pantalla 07.
+- [x] **SHIELD absorbido (resuelto 14 oct):** la API manda `lastResult.powerUsed` y el frontend lo usa (`LastResult.powerUsed` en `web/src/api/types.ts`; Reveal muestra "ESCUDO: NO PIERDES LA VIDA"). Verificado con la API real. Texto original del hueco: **No hay forma de saber si SHIELD absorbió la vida.** `lastResult` no trae `powerUsed`/`shieldAbsorbed` y `activePower` es `null` en el ejemplo de REVEAL. Inferirlo con `!isCorrect && livesLost === 0` es ambiguo con el timeout. Proponer a Jared un campo en `lastResult` (p. ej. `powerUsed: PowerType | null` o `shieldAbsorbed: boolean`) para animar el escudo en la pantalla 07.
 - [ ] **`lastResult` en timeout (no respondió).** Ya estaba pendiente; para desarrollar el mock asume `chosenOptionId: null`, `answerTimeMs: null`, `basePoints: 0`, `speedBonus: 0`, `pointsAwarded: 0` y **`livesLost: 1`** (el timeout se trata como fallo; SHIELD lo evita). Confirmar con Jared que el servidor hace lo mismo. Los tipos ya permiten `null` en esos dos campos (como `round-results.json`).
 - [ ] **No existe `GET /players/me`.** Un token guardado en `localStorage` solo se descubre inválido con un `401 UNAUTHORIZED` tardío (p. ej. tras reiniciar la API). El cliente reacciona limpiando la sesión y volviendo a Home con aviso; un endpoint de verificación (o aceptar el token en `GET /rooms/{code}`) lo haría inmediato.
 
@@ -71,7 +80,8 @@ Siguen abiertos:
 
 - [ ] **Pantalla 08 (Scoreboard) vs contrato:** la spec dice mostrar los puntos de la ronda (`pointsThisRound`) en el marcador, pero el contrato los manda en `null` durante `SCOREBOARD` (solo vienen en `REVEAL`). Gana el contrato: los puntos ganados por jugador se muestran en el REVEAL (07) y el marcador solo anima el puntaje propio (`me.lastResult.pointsAwarded`). Si se quiere la ganancia de todos en el marcador, pedir a Jared que `pointsThisRound` siga poblado en `SCOREBOARD`.
 - [x] **Estadísticas (10/15):** implementadas en `/partida/:gameId/resultados` (tarjetas y tabla) con `GET /games/{id}/results`.
-- [ ] **Revancha (11):** el final solo ofrece ESTADISTICAS y SALIR (vuelve a Home). Falta definir con Jared cómo se pide una revancha en la misma sala (¿otro `POST /rooms/{code}/games`?).
+- [x] **Revancha (11):** JUGAR OTRA VEZ en el podio y en los resultados. El host llama `POST /rooms/{code}/games`; los demás ven "ESPERANDO AL HOST..." y entran solos al detectar un `currentGameId` nuevo en `GET /rooms/{code}`. SALIR hace `DELETE` y limpia la sesión. Probada con la API real (host e invitado).
+- [ ] **Revancha: limitaciones conocidas** (de la API, ver `api/PLAN-API.md` §9): (a) quien sale con SALIR conserva su fila de participante y entra igual a la revancha sin responder (acaba de espectador); (b) los resultados de una partida vieja muestran el puntaje reiniciado cuando empieza la revancha. Si estorban: indicador de ausente (migración) y/o guardar el puntaje por partida.
 - [ ] **Semántica de las estadísticas (D12):** el cliente muestra lo que manda `/results` sin recalcular. Confirmar con Jared: si `averageAnswerTimeMs` y `fastestAnswerMs` incluyen respuestas incorrectas, qué valen cuando el jugador no respondió nunca (hoy el mock manda `0` y el cliente muestra "—") y qué `bestRound` se manda sin puntos (el cliente muestra "—" si `points` es 0). En el mock, `totalAnswers` cuenta solo las rondas respondidas (no los timeouts); confirmar qué hace el servidor real.
 - [ ] **Empates en el ranking:** el cliente confía en `position` del servidor y no resuelve empates por su cuenta. Pedir a Jared el criterio de desempate (¿orden de unión?, ¿tiempo?).
 

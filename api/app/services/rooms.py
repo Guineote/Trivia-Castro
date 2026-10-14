@@ -157,7 +157,8 @@ def start_game(db: Session, player: Player, code: str) -> dict:
     me = participant_of(db, room, player)
     if me is None or not me.is_host:
         raise ApiError(403, "NOT_HOST")
-    if room.status != "WAITING":
+    # D13 (revancha): también se puede iniciar desde una sala FINISHED; solo se rechaza con una partida en curso.
+    if room.status == "IN_GAME":
         raise ApiError(409, "GAME_ALREADY_STARTED")
     members = participants_of(db, room)
     if len(members) < MIN_PLAYERS_TO_START:

@@ -380,6 +380,8 @@ export function createSimulator(options: SimulatorOptions, initial?: World) {
     const target = room.participants.find((p) => p.participantId === participantId)
     if (!me || !target) throw new SimError(me ? 404 : 403, me ? 'ROOM_NOT_FOUND' : 'FORBIDDEN')
     if (target.participantId !== me.participantId && !me.isHost) throw new SimError(403, 'FORBIDDEN')
+    // Como la API real: fuera de la sala de espera la fila se conserva (acaba de espectador / sigue en la revancha).
+    if (room.status !== 'WAITING') return
     room.participants = room.participants.filter((p) => p.participantId !== target.participantId)
     if (target.isHost) {
       // D11: el rol pasa al participante más antiguo (el primero en la lista).
@@ -419,7 +421,8 @@ export function createSimulator(options: SimulatorOptions, initial?: World) {
     materializeBots(room)
     const me = participantOf(room, player)
     if (!me?.isHost) throw new SimError(403, 'NOT_HOST')
-    if (room.status !== 'WAITING') throw new SimError(409, 'GAME_ALREADY_STARTED')
+    // D13 (revancha): también se puede iniciar desde una sala FINISHED; solo se rechaza con una partida en curso.
+    if (room.status === 'IN_GAME') throw new SimError(409, 'GAME_ALREADY_STARTED')
     if (room.participants.length < MIN_PLAYERS_TO_START) throw new SimError(409, 'NOT_ENOUGH_PLAYERS')
 
     const { categoryIds, rounds: totalRounds, lives } = room.settings
@@ -559,6 +562,7 @@ export function createSimulator(options: SimulatorOptions, initial?: World) {
         pointsAwarded,
         livesLost,
         becameSpectator,
+        powerUsed: p.activePower,
       }
       outcomes.push({
         participantId: p.participantId,

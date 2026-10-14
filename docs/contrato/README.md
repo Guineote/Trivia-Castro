@@ -116,6 +116,7 @@ Campos de `me` y de cada elemento de `players` (ver `ejemplos/`):
 1. El Website consulta `GET /rooms/{code}` (público) cada ~1 s mientras está en la sala de espera, para ver quién entra.
 2. Cuando el host llama `POST /rooms/{code}/games`, `GET /rooms/{code}` empieza a devolver `currentGameId` (antes era `null`) y `status: "IN_GAME"`.
 3. Al ver `currentGameId`, todos los clientes pasan a hacer polling de `GET /games/{currentGameId}/state`.
+4. **Revancha (D13):** con la sala en `FINISHED`, el host vuelve a llamar `POST /rooms/{code}/games`. `GET /rooms/{code}` pasa a devolver el `currentGameId` nuevo y `status: "IN_GAME"`. Los clientes que siguen en la pantalla final consultan la sala y, al ver un `currentGameId` distinto del que están viendo, pasan a la partida nueva.
 
 ## 7. Reglas de negocio que el contrato da por hechas
 
@@ -125,7 +126,7 @@ Campos de `me` y de cada elemento de `players` (ver `ejemplos/`):
 - La respuesta correcta solo se publica en `REVEAL`. `POST .../answers` **no** dice si acertó.
 - El bonus de velocidad es una función aislada en el servidor; su fórmula sigue **pendiente**. Los valores de los ejemplos (316 por 4.2 s) son solo ilustrativos.
 
-## 8. Decisiones confirmadas (D1 a D12)
+## 8. Decisiones confirmadas (D1 a D13)
 
 Confirmadas por ambos integrantes. Cualquier cambio posterior se anota aquí.
 
@@ -141,3 +142,4 @@ Confirmadas por ambos integrantes. Cualquier cambio posterior se anota aquí.
 - [x] **D10.** Formato de error propio (sección 2) en lugar del `detail` de FastAPI.
 - [x] **D11.** Si el host sale de la sala, el rol pasa al participante más antiguo.
 - [x] **D12.** Estadísticas finales (pantalla 13): aciertos, tiempo medio de respuesta, respuesta más rápida y mejor ronda por jugador (ver `ejemplos/results.json`).
+- [ ] **D13 [PROPUESTA, pendiente de aprobar con el PR].** Revancha en la misma sala: `POST /rooms/{code}/games` también se acepta con la sala en `FINISHED` (solo el host). Crea una partida nueva con los **mismos participantes y ajustes**; puntaje, vidas, estado (`ACTIVE`) e inventario de poderes se **reinician**, la sala vuelve a `IN_GAME` y `currentGameId` pasa al id nuevo. Con una partida en curso sigue respondiendo `409 GAME_ALREADY_STARTED`. Las partidas anteriores siguen existiendo. **Limitación conocida:** `DELETE` de un participante fuera de `WAITING` conserva su fila (por el historial de la partida), así que quien se va igualmente entra a la revancha sin responder; si estorba, habría que añadir un indicador de ausente.
