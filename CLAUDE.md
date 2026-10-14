@@ -217,13 +217,14 @@ puntos = (base + bonus_velocidad) x mult_ronda x mult_poder
 - **API (`api/`, Jared): implementada y probada** (commit `f9cc073`, 11 oct). 17 de los 18 endpoints; modelos y migración Alembic; seed de 10 categorías y 120 preguntas; fases perezosas, puntos, vidas, poderes (HINT, SHIELD, DOUBLE), ranking con `positionDelta`, resultados y estadísticas; `scripts/play_bots.py`; 25 pruebas pytest en verde (SQLite). Estado por hito y decisiones propias: `api/PLAN-API.md`.
 - **Falta:**
   - Ensayo con **varios dispositivos** en red: la Integración 1 y 2 ya se probó a mano el 12 oct en una sola computadora (Website con `VITE_USE_MOCK=false` contra la API en MySQL, pestaña normal + incógnito + `play_bots.py`, todos los poderes funcionando, Adler lo vio).
-  - Que Adler revise las **decisiones del frente A** (`docs/frontend/PENDIENTES.md`) y añada `powerUsed` a `web/src/api/types.ts`; después se pasan al contrato (milisegundos en timestamps, `powerUsed`, `NOT_FOUND`/`INTERNAL_ERROR`, rangos de `settings`, etc.).
+  - Que Adler acepte las **decisiones del frente A** (`docs/frontend/PENDIENTES.md`) y se pasen al contrato (milisegundos en timestamps, `powerUsed`, `NOT_FOUND`/`INTERNAL_ERROR`, rangos de `settings`, etc.). El frontend ya usa `powerUsed` (14 oct) y se verificó contra la API real: timeout, escudo, espectador, `NICKNAME_TAKEN`, ETag/304 y milisegundos.
+  - Que Jared revise la **revancha (D13)**: cambio de 1 línea en `rooms.start_game` y reinicio del inventario de poderes en `games.create_game`, con pruebas; la propuesta está en `docs/contrato/README.md`.
   - Limpieza de salas viejas. `POST /questions/import` (A12) **se descarta**: se usa el seed de 120 preguntas.
 - Pendientes por definir (no están en la documentación):
   - Fórmula exacta del bonus de velocidad (**se deja pendiente a propósito; se definirá después**; el 316 del ejemplo es solo ilustrativo). La API y el mock usan provisionalmente `400·(20 s − t)/20 s`.
   - Puntaje base de cada dificultad (niveles `EASY`, `MEDIUM`, `HARD`). La API y el mock usan provisionalmente 500/800/1100.
   - Pantalla "Apuesta": no está en el contrato ni en la spec del frontend; **no se construye**.
-  - Revancha tras `FINAL`: no definida.
+  - Revancha tras `FINAL`: **implementada el 14 oct (D13)** en la API y el frontend; falta que Jared la apruebe en el PR y se confirme en el contrato.
   - Fuente de la API externa de preguntas (solo si se hace la importación).
 - Ya resuelto en el contrato compartido (`docs/contrato/README.md`, decisiones D1 a D12): efecto de los poderes (HINT quita 2 opciones incorrectas, SHIELD evita perder la vida al fallar, DOUBLE multiplica x2 los puntos; combinado con ronda DOUBLE da x4) y límites por defecto de sala (8 jugadores, 10 rondas, 3 vidas).
 - **Entregable final:** además del juego, un **documento final del proyecto con el manual de la API** (aún no escrito; la base es `docs/contrato/`).

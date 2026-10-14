@@ -119,6 +119,11 @@ export interface LastResult {
   pointsAwarded: number
   livesLost: number
   becameSpectator: boolean
+  /**
+   * Poder que se usó en esa ronda (propuesta aceptada por la API; aún no está en los ejemplos del contrato).
+   * Sirve para saber si el SHIELD absorbió la vida: `powerUsed === 'SHIELD' && livesLost === 0 && !isCorrect`.
+   */
+  powerUsed?: PowerType | null
 }
 
 export interface Me {

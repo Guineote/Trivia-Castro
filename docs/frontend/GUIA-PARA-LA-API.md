@@ -9,7 +9,7 @@ Documento para **Jared**. Explica qué hay hecho en `web/`, qué espera exactame
 | Contrato (`docs/contrato/`) | v0.2 cerrado, decisiones D1–D12 confirmadas |
 | Frontend (`web/`) | Completo contra un **mock**: Home, Crear sala, Unirse, Lobby, ciclo de partida (intro, pregunta, reveal, marcador, final, espectador), estadísticas, errores, sonido |
 | API (`api/`) | **Implementada y probada** (12 oct): 17 de 18 endpoints, 120 preguntas, 25 pruebas pytest. Ver [`api/PLAN-API.md`](../../api/PLAN-API.md) |
-| Integración real | Probada a mano el 12 oct: Website con `VITE_USE_MOCK=false` contra la API en MySQL, partida completa y todos los poderes |
+| Integración real | Probada a mano el 12 oct (MySQL) y el 14 oct por Adler contra la API sobre SQLite: partida completa, escudo en timeout (`powerUsed`), paso a espectador, `NICKNAME_TAKEN`, ETag/304, milisegundos, estadísticas y **revancha** (host e invitado) |
 
 Lo importante: **no estás bloqueado por el frontend ni al revés**. El frontend ya funciona contra el mock; en cuanto tu API cumpla el contrato, se cambia una variable de entorno y se prueban juntos.
 
@@ -50,6 +50,7 @@ Frecuencias de polling: `GET /rooms/{code}` y `GET /games/{id}/state` cada **1 s
 | Lobby (`/sala/:code`) | `GET /rooms/{code}` (polling), `PATCH /rooms/{code}`, `POST /rooms/{code}/games`, `DELETE /rooms/{code}/players/{participantId}` | `PATCH` solo con los campos cambiados, con un debounce de 400 ms. Cuando `currentGameId` deja de ser `null`, todos pasan a la partida |
 | Partida (`/partida/:id`) | `GET /games/{id}/state` (polling, ETag), `POST .../answers`, `POST .../powers` | Una sola ruta; la pantalla la decide `phase` |
 | Resultados (`/partida/:id/resultados`) | `GET /games/{id}/results` | Solo tras `FINAL` (si no, `GAME_NOT_FINISHED`) |
+| Final y Resultados: JUGAR OTRA VEZ / SALIR | `GET /rooms/{code}` (cada 1 s), `POST /rooms/{code}/games` (host), `DELETE /rooms/{code}/players/{participantId}` | **Revancha (D13):** el host reinicia la partida en la misma sala; los demás ven un `currentGameId` nuevo y entran solos. Necesita la sala en `FINISHED` y `roomCode` en la sesión |
 
 **Endpoints que el cliente tiene implementados pero ninguna pantalla usa todavía:** `POST /games/{id}/advance`, `GET /games/{id}/ranking`, `GET /games/{id}/rounds/{n}/results`. Las pantallas se dibujan solo desde `state`. Tampoco usa `GET/POST /questions` ni `/questions/import` (administración de contenido, D9).
 
@@ -74,6 +75,8 @@ Dos alternativas de diseño que el simulador demuestra y que quizá te simplifiq
 - **`version` como contador:** sube con cada cambio visible (respuesta, poder, cambio de fase). Es la base del ETag y del 304.
 
 ### Cosas que el mock tuvo que inventar (no son reglas del juego)
+
+> **Actualización (14 oct):** Jared ya tomó estas decisiones en la API y quedaron registradas en la tabla «Decisiones del frente A» de [`PENDIENTES.md`](PENDIENTES.md); casi todas coinciden con las propuestas de abajo (incluido `powerUsed` en `lastResult`). Lo que sigue es el contexto original.
 
 Están marcadas como `SUPUESTO DE MOCK` en el código. Son decisiones tuyas:
 

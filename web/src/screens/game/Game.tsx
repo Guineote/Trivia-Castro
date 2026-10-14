@@ -38,8 +38,13 @@ function announcement(state: GameState): string {
  * Contenedor de la partida: hace polling de GET /games/{id}/state y elige la pantalla por `phase`.
  * Toda la lógica de transición es del servidor; aquí solo se dibuja lo que llega.
  */
+/** Un `key` por partida: al pasar a la revancha todo el estado de la pantalla (fases vistas, vidas máximas…) arranca limpio. */
 export default function Game() {
   const { gameId = '' } = useParams()
+  return <GameScreen key={gameId} gameId={gameId} />
+}
+
+function GameScreen({ gameId }: { gameId: string }) {
   const navigate = useNavigate()
   const session = useSession()
   const query = useGameState(session ? gameId : undefined)

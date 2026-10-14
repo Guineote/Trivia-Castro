@@ -9,6 +9,8 @@ import { Stage } from '@/components/Stage/Stage'
 import { dur, glitchIn } from '@/lib/motion'
 import { play } from '@/lib/sound'
 import { GameHud } from '../game/GameHud'
+import { RematchControl } from '../game/RematchControl'
+import { useRematch } from '../game/useRematch'
 import type { GameScreenProps } from '../game/types'
 import styles from './Final.module.css'
 
@@ -53,6 +55,7 @@ function PodiumBlock({ entry, isMe }: { entry: RankingEntry; isMe: boolean }) {
 /** 09 · FINAL: podio que se construye por bloques 3º → 2º → 1º, confeti en el ganador. */
 export default function Final({ gameId, state, maxLives }: GameScreenProps) {
   const navigate = useNavigate()
+  const rematch = useRematch(gameId)
   const { me, winner } = state
   const ranking = state.ranking ?? []
   const podium = ranking.filter((r) => r.position <= 3)
@@ -115,8 +118,8 @@ export default function Final({ gameId, state, maxLives }: GameScreenProps) {
         <PixelButton color="cyan" onClick={() => navigate(`/partida/${gameId}/resultados`)}>
           ESTADISTICAS
         </PixelButton>
-        {/* Revancha pendiente con Jared: por ahora se vuelve al inicio. */}
-        <PixelButton color="magenta" onClick={() => navigate('/')}>
+        <RematchControl rematch={rematch} />
+        <PixelButton color="magenta" onClick={() => void rematch.leave()}>
           SALIR
         </PixelButton>
       </motion.footer>

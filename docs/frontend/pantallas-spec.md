@@ -16,7 +16,7 @@ Basado en el contrato (`docs/contrato/`). Si hay diferencia, gana el contrato. L
 | 08 | Scoreboard | `/partida/:gameId` (`SCOREBOARD`) | hecho |
 | 09 | Final / podio | `/partida/:gameId` (`FINAL`) | hecho |
 | 10 | Stats | `/partida/:gameId/resultados` (vista TARJETAS) | hecho |
-| 11 | Salir / volver | botones de Final y Resultados | parcial: sin revancha |
+| 11 | Salir / volver | botones de Final y Resultados (JUGAR OTRA VEZ = revancha D13, SALIR) | hecho |
 | 12 | Espectador | variante de 06–08 (`me.status = SPECTATOR`) | hecho |
 | 13 | Error / reconexión | banner RECONECTANDO + `UNAUTHORIZED` → Home | hecho |
 | 14 | Sala llena / código inválido / ya iniciada | `ErrorPanel` | hecho |
@@ -91,7 +91,7 @@ Extras: sonido (WebAudio, con mute persistente) y efecto CRT opcional. La pantal
 - Presentarlo como "tarjetas de jugador" estilo cartas coleccionables arcade; barras de precisión que se llenan.
 
 ## 11 · Salir / volver
-- Botón **JUGAR OTRA VEZ** (revancha: pendiente con Jared; por ahora volver a Home) y **SALIR**.
+- Botón **JUGAR OTRA VEZ** (revancha D13: el host llama `POST /rooms/{code}/games`; los demás ven "ESPERANDO AL HOST..." y entran solos) y **SALIR** (`DELETE` y vuelta a Home).
 
 ## 12 · Variante Espectador (SPECTATOR)
 - Misma pantalla que 06–08 pero sin controles de respuesta, overlay "ESPECTADOR", filtro gris parcial.
