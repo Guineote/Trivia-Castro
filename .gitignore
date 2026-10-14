@@ -12,3 +12,5 @@ dist/
 *.log
 .claude/settings.local.json
 Trivia.session.sql
+*.pem
+*.key
