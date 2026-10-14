@@ -99,3 +99,51 @@ def test_categorias_y_preguntas(api):
     assert api.c.post("/api/v1/questions", headers=ana["h"], json=body).status_code == 201
     body["options"][1]["isCorrect"] = True  # dos correctas
     assert api.c.post("/api/v1/questions", headers=ana["h"], json=body).json()["error"]["code"] == "VALIDATION_ERROR"
+
+
+def test_revancha_en_la_misma_sala(api):
+    """D13: el host puede iniciar otra partida desde una sala FINISHED; todo se reinicia y los poderes no se acumulan."""
+    ana, beto = api.player("Ana"), api.player("Beto")
+    room = api.room(ana, rounds=3)
+    api.join(room, beto)
+    url = f"/api/v1/rooms/{room['code']}/games"
+
+    first = api.start(room, ana)
+    # con una partida en curso sigue sin poder iniciarse otra
+    assert api.c.post(url, headers=ana["h"]).json()["error"]["code"] == "GAME_ALREADY_STARTED"
+
+    api.to_phase(first, ana, "QUESTION")
+    assert api.power(first, 1, ana, "SHIELD").status_code == 200  # Ana gasta el escudo en la partida 1
+    api.wait(10 * 60 * 1000)
+    assert api.c.get(f"/api/v1/rooms/{room['code']}").json()["status"] == "FINISHED"
+
+    # solo el host inicia la revancha
+    assert api.c.post(url, headers=beto["h"]).json()["error"]["code"] == "NOT_HOST"
+    r = api.c.post(url, headers=ana["h"])
+    assert r.status_code == 201, r.text
+    second = r.json()["gameId"]
+    assert second != first and r.json()["phase"] == "ROUND_INTRO"
+
+    after = api.c.get(f"/api/v1/rooms/{room['code']}").json()
+    assert after["status"] == "IN_GAME" and after["currentGameId"] == second
+    assert len(after["participants"]) == 2  # mismos participantes, mismos ajustes
+
+    me = api.state(second, ana).json()["me"]
+    assert (me["score"], me["lives"], me["status"], me["lastResult"]) == (0, 3, "ACTIVE", None)
+    assert sorted(p["powerType"] for p in me["powers"]) == ["DOUBLE", "HINT", "SHIELD"]  # inventario nuevo, sin duplicados
+
+    # HINT no se gastó en la partida 1: si el inventario viejo siguiera vivo, tras usarlo aquí aún quedaría uno
+    api.to_phase(second, ana, "QUESTION")
+    assert api.power(second, 1, ana, "HINT").status_code == 200
+    powers = [p["powerType"] for p in api.state(second, ana).json()["me"]["powers"]]
+    assert "HINT" not in powers and sorted(powers) == ["DOUBLE", "SHIELD"]
+
+    # la partida anterior sigue existiendo
+    assert api.state(first, beto).status_code == 200
+
+
+def test_revancha_sigue_validando_jugadores(api):
+    ana = api.player("Ana")
+    room = api.room(ana, rounds=1)
+    # una sola persona no puede iniciar (D4), tampoco en revancha
+    assert api.c.post(f"/api/v1/rooms/{room['code']}/games", headers=ana["h"]).json()["error"]["code"] == "NOT_ENOUGH_PLAYERS"

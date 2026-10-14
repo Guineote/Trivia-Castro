@@ -6,7 +6,7 @@ dos relojes sobre la misma partida.
 """
 import random
 
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -93,6 +93,8 @@ def create_game(db: Session, room: Room, members: list[Participant]) -> Game:
         # Las rondas DOUBLE aparecen cada tercera ronda (predecible para la demo).
         db.add(Round(game_id=game.id, number=number, type="DOUBLE" if number % 3 == 0 else "NORMAL",
                      question_id=question.id, option_order=order))
+    # Revancha (D13): el inventario de la partida anterior se descarta; si no, los poderes sin usar se acumularían.
+    db.execute(delete(ParticipantPower).where(ParticipantPower.participant_id.in_([p.id for p in members])))
     for p in members:
         p.score, p.lives, p.status = 0, room.lives, "ACTIVE"
         for power in POWER_TYPES:
